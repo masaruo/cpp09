@@ -6,16 +6,16 @@
 /*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/04/30 18:56:56 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/02 19:21:13 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
-#include <cstdlib>
-#include <cctype>
 #include <iostream>
-#include <algorithm>
-#define SPACE (' ')
+#include <cctype>
+#include <cstdlib>
+
+int const SPACE = ' ';
 
 static int	is_operator(int c)
 {
@@ -25,82 +25,110 @@ static int	is_operator(int c)
 		return (0);
 }
 
-static bool	is_valid_input(std::string const &word)
+int	RPN::get_calc_num(int first, int last, int opter)
 {
-	if (word.length() == 1)
+	switch (opter)
 	{
-		if (is_operator(word.at(0)) || isnumber(word.at(0)))
-			return (true);
-		else
-			return (false);
-	}
-	else
-	{
-		std::string::const_iterator it = word.begin();
-		while (it < word.end())
-		{
-			if (!isnumber(*it))
-				return (false);
-			it++;
-		}
-		return (true);
+		case ('*'):
+			return (first * last);
+		case ('+'):
+			return (first + last);
+		case ('-'):
+			return (first - last);
+		case ('/'):
+			if (last == 0)
+			{
+				throw (ZeroDivisionException());
+				break ;
+			}
+			return (first / last);
+		default:
+			return (0);
 	}
 }
 
-void	RPN::fill_deque(std::string const &input)
+void	RPN::calculate(std::string const &num)
 {
-	std::string::const_iterator	begin = input.begin();
-	std::string::const_iterator	checker = input.begin();
-	std::string::const_iterator	follower = input.begin();
-	std::string::const_iterator	end = input.end();
-	std::string					token;
-	while (true)
+	std::string::const_iterator iter = num.begin();
+	std::string::const_iterator	end = num.end();
+
+	while (iter != end)
 	{
-		if (*checker == SPACE)
+		int const ch = static_cast<int>(*iter);
+		if (std::isdigit(ch))
 		{
-			token = input.substr(follower - begin, checker - follower);
-			checker++;
-			follower = checker;
-			std::cout << token << std::endl;
+			this->stack_.push(ch - '0');
+			iter++;
 		}
-		else if (checker == end)
+		else if (is_operator(ch))
 		{
-			if (follower != checker)
+			if (stack_.size() != 2)
 			{
-				token = input.substr(follower - begin, checker - follower);
-				std::cout << token << std::endl;
+				std::cout << "Error" << std::endl;
+				std::exit(1);
 			}
-			break ;
+			int const last_ = this->stack_.top();
+			this->stack_.pop();
+			int const first_ = this->stack_.top();
+			this->stack_.pop();
+			int	answer = 0;
+			try
+			{
+				answer = get_calc_num(first_, last_, ch);
+				this->stack_.push(answer);
+			}
+			catch(std::exception const &e)
+			{
+				std::cerr << e.what() << '\n';//!
+				std::cout << "Error" << std::endl;
+				std::exit(1);
+			}
+			iter++;
+		}
+		else if (ch == SPACE)
+		{
+			iter++;
+			continue ;
 		}
 		else
 		{
-			checker++;
+			std::cout << "Error" << std::endl;
+			std::exit(1);
 		}
 	}
+	if (this->stack_.size() != 1)
+	{
+		std::cout << "Error" << std::endl;
+		std::exit(1);
+	}
+	std::cout << stack_.top() << std::endl;
 }
 
 RPN::RPN(){ return ; }
-RPN::RPN(std::string const &input)
+
+RPN::RPN(std::string const &num)
 {
-	fill_deque(input);
-	(void) is_operator('a');
+	calculate(num);
 	return ;
 }
 
 RPN::RPN(RPN const &rhs)
 {
 	(void) rhs;
-	//todo
 }
 
 RPN::~RPN()
 {
-	//todo
+	return ;
 }
 
 RPN	&RPN::operator=(RPN const &rhs)
 {
-	//todo
 	(void) rhs;
 	return (*this);
+}
+
+char const	*RPN::ZeroDivisionException::what() const throw ()
+{
+	return ("Zero Division.");
 }
