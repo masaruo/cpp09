@@ -6,7 +6,7 @@
 /*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/02 19:21:13 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/02 19:37:59 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	RPN::calculate(std::string const &num)
 		}
 		else if (is_operator(ch))
 		{
-			if (stack_.size() != 2)
+			if (stack_.size() < 2)
 			{
 				std::cout << "Error" << std::endl;
 				std::exit(1);
@@ -79,7 +79,7 @@ void	RPN::calculate(std::string const &num)
 			}
 			catch(std::exception const &e)
 			{
-				std::cerr << e.what() << '\n';//!
+				// std::cerr << e.what() << std::endl;
 				std::cout << "Error" << std::endl;
 				std::exit(1);
 			}
