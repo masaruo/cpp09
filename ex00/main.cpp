@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
+/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 00:34:04 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/03 00:35:15 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/07 12:13:25 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,6 @@
 int main(int argc, char **argv)
 {
 	//todo error
-	BitcoinExchange btc(argv[1], 1);
+	BitcoinExchange btc(argv[1]);
+	return (0);
 }

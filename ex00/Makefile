@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
+#    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/03 00:40:24 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/07 12:27:41 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,7 +61,7 @@ leak: fclean
 
 debug: fclean
 	$(MAKE) all WITH_ASAN=1
-	./$(TARGET)
+	./$(TARGET) input.txt
 
 clean:
 	$(RM) -r $(OBJDIR)

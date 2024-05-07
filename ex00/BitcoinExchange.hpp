@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
+/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/06 18:48:40 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/07 13:08:20 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@
 class BitcoinExchange
 {
 private:
-	std::map<std::string, float>	data_;
-	std::size_t						amount_;
+	std::map<std::string, double>	data_;
+	std::map<std::string, double>	input_;
+	//helper
+	template <typename F>
+	void	parseData(std::string const &file, F functor);
 	BitcoinExchange();//hidden
 public:
-	BitcoinExchange(std::string const &file, int amt);
+	BitcoinExchange(std::string const &file);
 	BitcoinExchange(BitcoinExchange const &rhs);
 	~BitcoinExchange();
 	BitcoinExchange &operator=(BitcoinExchange const &rhs);
