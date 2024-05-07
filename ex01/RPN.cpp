@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/02 19:37:59 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/02 23:50:16 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ int	RPN::get_calc_num(int first, int last, int opter)
 				throw (ZeroDivisionException());
 				break ;
 			}
-			return (first / last);
+			else
+			{
+				return (first / last);
+			}
 		default:
 			return (0);
 	}

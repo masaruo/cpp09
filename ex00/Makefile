@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
+#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/01 17:32:26 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/03 00:40:24 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET		:=	btc
 CXX			:=	c++
-CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -std=c++98 -MMD -MP
+CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -pedantic-errors -std=c++98 -MMD -MP
 LDFLAGS		:=	
 GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/include
 GTEST_LIB	:=	-L../googletest/build/lib
