@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/07 16:21:03 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/08 18:49:46 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,77 +17,118 @@
 #include <string>
 #include <utility>
 #include <algorithm>
+#include <limits>
 
-static std::pair<std::string, double>	parse_data_csv(std::string const &buf)
+void	BitcoinExchange::parse_data_csv(std::string const &buf)
 {
-	std::pair<std::string, double>	pair = std::make_pair("header", 0);
+	std::pair<std::string, double>	pair;
 
-	std::string::size_type	const	delim_pos = buf.find(',');
-	std::string const				date_ = buf.substr(0, delim_pos);
-	if (date_ == "date")
-		return (pair);
-	std::string const				value_ = buf.substr(delim_pos + 1, buf.size());
-	double const					value_in_double = std::atof(value_.c_str());
-	pair.first = date_;
-	pair.second = value_in_double;
-	return (pair);
+	std::string const	date = buf.substr(0, buf.find(","));
+	std::string const	rate = buf.substr(buf.find(",") + 1);
+	if (date == "date")
+		return ;
+	pair.first = date;
+	pair.second = std::atof(rate.c_str());
+	rate_.insert(pair);
+	return ;
 }
 
-static	bool	check_date_format(std::string const &dt)
+btc_it	BitcoinExchange::get_spot_or_lower_iter(std::string const &key) const
 {
+	btc_it	iter;
 
-	std::string::const_iterator	begin = dt.begin();
-	std::string::const_iterator	end = dt.end();
-	std::string::const_iterator	iter = begin;
-	std::string					cal[3];
-	std::string::value_type		delim_pos = 0;
-
-	std::size_t 				i = 0;
-	while (delim_pos != std::string::npos)
+	iter = rate_.find(key);
+	if (iter == rate_.end())
 	{
-		delim_pos = dt.find("-", delim_pos);
-		cal[i](dt, )
+		iter = rate_.lower_bound(key);
+		if (iter != rate_.begin())
+			iter--;
+	}
+	return (iter);
+}
+
+void	BitcoinExchange::assert_correct_value_range(std::string const &value) const
+{
+	double	const val_d = std::atof(value.c_str());
+
+	if (val_d > 1000)
+		throw (BtcTooLargeValueException());
+	else if (val_d < 0)
+		throw (BtcNegativeValueException());
+}
+
+static bool	is_date_correct(std::string const &date)
+{
+	// 2011-01-03
+	std::string const	delim = "-";
+	std::string const	yyyy = date.substr(0, date.find(delim));
+	std::string const	mm = date.substr(date.find(delim) + 1, 2);
+	std::string const	dd = date.substr(date.rfind(delim) + 1, 2);
+	// std::cout << yyyy << mm << dd << std::endl;
+	if (yyyy < "2009" || yyyy > "2022")
+		return (false);
+	else if (mm < "01" || mm > "12")
+		return (false);
+	else if (dd < "01" || dd > "31")
+		return (false);
+	else
+		return (true);
+}
+
+void	BitcoinExchange::assert_correct_input(std::string const &date, std::string const &delim, std::string const &value) const
+{
+	std::cout << delim << std::endl;
+}
+
+void	BitcoinExchange::input_handler(std::string const &buf)
+{
+	std::string const	delim = " | ";
+	std::string const	date = buf.substr(0, buf.find(delim));
+	std::string const	delim_part = buf.substr(buf.find(delim), buf.find(delim) + 3);
+	std::string const	value = buf.substr(buf.find(delim) + 3, buf.size());
+
+	//todo delete
+	std::cout << is_date_correct(date) << " | " << date << std::endl;
+
+	if (date == "date")
+		return ;
+	try
+	{
+		assert_correct_input(date, delim_part, value);
+		assert_correct_value_range(value);
+		double const		price_d = std::atof(value.c_str());
+		btc_it	iter = get_spot_or_lower_iter(date);
+		if (iter != rate_.end())
+		{
+			std::cout << date << " => " << price_d << " = " << iter->second * price_d << std::endl;
+			// std::cout << "first: " << iter->first << " and 2nd: " << iter->second << std::endl;
+		}
+	}
+	catch (std::out_of_range const &e)
+	{
+		std::cout << e.what() << std::endl;
 	}
 }
 
-static std::pair<std::string, double>	parse_data_input(std::string const &buf)
-{
-	std::pair<std::string, double>	pair = std::make_pair("fail", 0);
-	std::string::const_iterator		end = buf.end();
-	std::string::const_iterator		iter = buf.begin();
-	std::string::const_iterator		delim_pos = std::find(iter, end, " | ");
-
-	if (buf.empty())
-		pair.first = "Error: empty data.";
-	else if (delim_pos == end)
-		pair.first = "Error: wrong format.";
-	std::string	date_(buf.begin(), delim_pos);
-	std::string	value_(delim_pos + 1, end);
-	//wrong format year month day
-	//int or float and between 0 and 1000
-	
-}
-
-template <typename F>
-void	BitcoinExchange::parseData(std::string const &file, F functor)
+void	BitcoinExchange::parseData(std::string const &file, f fptr)
 {
 	std::ifstream	ifs(file);
 	if (ifs.fail())
 	{
-		std::cout << "failed to open the data.csv." << std::endl;
+		std::cout << "Error: failed to open the data.csv." << std::endl;
 		std::exit(1);
 	}
 	for (std::string buf; std::getline(ifs, buf);)
 	{
-		std::pair<std::string, double>	pair = functor(buf);
-		data_.insert(pair);
+		(this->*fptr)(buf);
 	}
 }
 
 BitcoinExchange::BitcoinExchange(){ return ; }
 BitcoinExchange::BitcoinExchange(std::string const &input)
 {
-	parseData("./data.csv", parse_data_csv);
+	parseData("./data.csv", &BitcoinExchange::parse_data_csv);
+	parseData(input, &BitcoinExchange::input_handler);
 	return ;
 }
 
@@ -110,3 +151,19 @@ BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &rhs)
 	}
 	return (*this);
 }
+
+//exceptions
+char const	*BitcoinExchange::BtcNegativeValueException::what() const throw ()
+{
+	return ("Error: not a positive number.");
+}
+
+char const	*BitcoinExchange::BtcTooLargeValueException::what() const throw ()
+{
+	return ("Error: too large a number.");
+}
+
+// char const	*BitcoinExchange::BtcBadInputException::what() const throw ()
+// {
+// 	return (this->err_.c_str());
+// }

@@ -3,23 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:29:00 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/02 18:31:12 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/08 12:04:55 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RPN_HPP
 #define RPN_HPP
 #include <stack>
+#include <deque>
 #include <string>
 #include <stdexcept>
 
 class RPN
 {
 private:
-	std::stack<int> 	stack_;
+	std::stack<int, std::deque<int> > 	stack_;
 	std::string const	input_;
 	RPN();
 	RPN &operator=(RPN const &rhs);
@@ -44,6 +45,3 @@ public:
 };
 
 #endif
-
-
-//ゼロ徐算
