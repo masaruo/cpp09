@@ -6,13 +6,13 @@
 #    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/07 12:27:41 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/09 15:11:16 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET		:=	btc
 CXX			:=	c++
-CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -pedantic-errors -std=c++98 -MMD -MP
+CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -Wconversion -pedantic-errors -std=c++98 -MMD -MP
 LDFLAGS		:=	
 GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/include
 GTEST_LIB	:=	-L../googletest/build/lib
