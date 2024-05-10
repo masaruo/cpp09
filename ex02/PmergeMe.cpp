@@ -6,7 +6,7 @@
 /*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:33:09 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/10 17:53:14 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/10 19:11:21 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,11 @@ static	bool	is_valid_num(char const *argv)
 	return (true);
 }
 
-static pair_t	make_pair(std::size_t num, bool is_second)
-{
-	
-}
-
 PmergeMe::PmergeMe(char const **argv)
 {
 	std::size_t	i = 0;
+	std::size_t	odd = 0;
+	std::size_t	even = 0;
 
 	while (argv[i])
 	{
@@ -48,16 +45,23 @@ PmergeMe::PmergeMe(char const **argv)
 			std::exit(1);
 		}
 		std::size_t	num = std::strtoul(argv[i], NULL, 10);//* check l to num
-		std::pair<std::size_t, std::size_t>	pair(0, 0);
-		if (i % 2 == 0)//todo 最後の要素が奇数の時
-			pair.first = num;
+		if (i % 2 == 0)
+		{
+			even = num;
+		}
 		else
 		{
-			pair.second = num;
+			odd = num;
+			// std::pair<std::size_t, std::size_t> pair = make_pair()
+			pair_t	pair = std::make_pair(std::max(even, odd), std::min(even, odd));
 			lst.push_back(pair);
 		}
 		i++;
 	}
+	lst.sort();
+	std::list<pair_t>::const_iterator it;
+	for (; it != lst.end(); it++)
+		std::cout << (*it).first << " | " << (*it).second << std::endl;
 }
 
 PmergeMe::~PmergeMe()
@@ -80,20 +84,20 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 	return (*this);
 }
 
-template <typename C>
-void	PmergeMe::printC(C const &c) const
-{
-	std::stringstream ss;
-	typename C::const_iterator iter = c.begin();
-	for (; iter != c.end(); iter++)
-	{
-		ss << *iter << " ";
-		// std::cout << *iter << std::endl;
-	}
-	std::cout << ss.str() << std::endl;
-}
+// template <typename C>
+// void	PmergeMe::printC(C const &c) const
+// {
+// 	std::stringstream ss;
+// 	typename C::const_iterator iter = c.begin();
+// 	for (; iter != c.end(); iter++)
+// 	{
+// 		ss << *iter << " ";
+// 		// std::cout << *iter << std::endl;
+// 	}
+// 	std::cout << ss.str() << std::endl;
+// }
 
-void	PmergeMe::printLst(void) const
-{
-	printC<std::list<std::size_t> >(lst);
-}
+// void	PmergeMe::printLst(void) const
+// {
+// 	printC<std::list<std::size_t> >(lst);
+// }
