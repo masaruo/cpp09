@@ -6,7 +6,7 @@
 /*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:33:09 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/09 18:41:38 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/10 17:53:14 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <cerrno>
+#include <sstream>
 
 PmergeMe::PmergeMe(){ return ; }
 
@@ -31,6 +31,11 @@ static	bool	is_valid_num(char const *argv)
 	return (true);
 }
 
+static pair_t	make_pair(std::size_t num, bool is_second)
+{
+	
+}
+
 PmergeMe::PmergeMe(char const **argv)
 {
 	std::size_t	i = 0;
@@ -42,9 +47,15 @@ PmergeMe::PmergeMe(char const **argv)
 			std::cout << "Error" << std::endl;
 			std::exit(1);
 		}
-		unsigned long	tmp = std::strtoul(argv[i], NULL, 10);
-		// std::cout << tmp << std::endl;
-		lst.push_back(tmp);
+		std::size_t	num = std::strtoul(argv[i], NULL, 10);//* check l to num
+		std::pair<std::size_t, std::size_t>	pair(0, 0);
+		if (i % 2 == 0)//todo 最後の要素が奇数の時
+			pair.first = num;
+		else
+		{
+			pair.second = num;
+			lst.push_back(pair);
+		}
 		i++;
 	}
 }
@@ -56,6 +67,7 @@ PmergeMe::~PmergeMe()
 
 PmergeMe::PmergeMe(PmergeMe const &rhs)
 {
+	//todo
 	return ;
 }
 
@@ -71,14 +83,17 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 template <typename C>
 void	PmergeMe::printC(C const &c) const
 {
+	std::stringstream ss;
 	typename C::const_iterator iter = c.begin();
 	for (; iter != c.end(); iter++)
 	{
-		std::cout << *iter << std::endl;
+		ss << *iter << " ";
+		// std::cout << *iter << std::endl;
 	}
+	std::cout << ss.str() << std::endl;
 }
 
 void	PmergeMe::printLst(void) const
 {
-	printC<std::list<unsigned long> >(lst);
+	printC<std::list<std::size_t> >(lst);
 }
