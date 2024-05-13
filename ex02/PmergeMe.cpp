@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:33:09 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/14 08:36:44 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/14 08:52:13 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+
+// template <typename C<typename T> >
+// static void	print_container(C<T> c)
+// {
+	
+// }
 
 static void	printList(std::list<std::size_t> lst)
 {
@@ -136,7 +142,7 @@ PmergeMe::PmergeMe(int const argc, char const **argv)
 	}
 	if (is_odd)//todo fix oddleft == 0
 		pmend.push_back(odd_left);
-	std::list<std::size_t> jacob_seq = get_jacobsthal_seq(max);
+	std::list<std::size_t> jacob_seq = get_jacobsthal_seq(pmend.size());
 	std::list<std::size_t>::const_iterator	iter = jacob_seq.begin();
 	while (iter != jacob_seq.end())
 	{
