@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/13 16:51:35 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/13 23:23:37 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ private:
 	std::list<std::size_t> main_;
 	std::list<std::size_t> pmend;
 	std::list<std::size_t> jacob_seq;
+	std::list<std::size_t>::const_iterator get_iter(std::size_t idx) const;
 	PmergeMe();
 public:
 	PmergeMe(int const argc, char const **argv);

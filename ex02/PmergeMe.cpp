@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:33:09 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/13 19:50:55 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/14 08:09:47 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 static void	printList(std::list<std::size_t> lst)
-
 {
 	std::list<std::size_t>::const_iterator it = lst.begin();
 	while (it != lst.end())
@@ -29,47 +29,22 @@ static void	printList(std::list<std::size_t> lst)
 
 PmergeMe::PmergeMe(){ return ; }
 
-std::list<std::size_t>	get_jacobsthal_seq(std::size_t size)
+static std::list<std::size_t>	get_jacobsthal_seq(std::size_t size)
 {
 
-	typedef std::list<std::size_t>::iterator lst_it;
-	std::list<std::size_t>	rev_seq;
-	for (std::size_t i = size; i > 0; i--)
-	{
-		rev_seq.push_back(i);
-	}
-
 	std::size_t	prev = 1;
-	std::size_t	two_prev = 0;
+	std::size_t	before_prev = 0;
 	std::size_t	jacob = 0;
 	std::list<std::size_t> jacob_seq;
 	while (jacob < size)
 	{
-		jacob = prev + 2 * two_prev;
+		jacob = prev + (2 * before_prev);
 		jacob_seq.push_back(jacob);
-		lst_it	forward = rev_seq.begin();
-		lst_it	follow = rev_seq.begin();
-		lst_it	end = rev_seq.end();
-		while (forward != end)
-		{
-			if (*forward == jacob)
-			{
-				while (follow != forward)
-				{
-					jacob_seq.push_back(*follow);
-					lst_it tmp = follow;
-					follow++;
-					rev_seq.erase(tmp);
-				}
-				lst_it tmp = forward;
-				forward++;
-				follow = forward;
-				rev_seq.erase(tmp);
-			}
-			else
-				forward++;
-		}
-		two_prev = prev;
+		for (std::size_t i = jacob - 1; i > prev; i--)
+			jacob_seq.push_back(i);
+		if (std::find(jacob_seq.begin(), jacob_seq.end(), size) != jacob_seq.end())
+			break ;
+		before_prev = prev;
 		prev = jacob;
 	}
 	return (jacob_seq);
@@ -113,21 +88,36 @@ static void	validate_input(int const argc, char const **argv)
 	}
 }
 
+std::list<std::size_t>::const_iterator PmergeMe::get_iter(std::size_t idx) const
+{
+	std::size_t i = 1;
+	std::list<std::size_t>::const_iterator it = pmend.begin();
+
+	while (true)
+	{
+		if (i == idx)
+			return (it);
+		it++;
+		i++;
+	}
+}
+
 PmergeMe::PmergeMe(int const argc, char const **argv)
 {
 	validate_input(argc, argv);
 	std::size_t	i = 1;
+	std::size_t max = 0;
 	while (argv[i] && argv[i + 1])//todo 奇数対応
 	{
 		std::size_t	first = std::strtoull(argv[i], NULL, 10);
 		std::size_t	second = std::strtoull(argv[i + 1], NULL, 10);
+		if (std::max(first, second) > max)
+			max = std::max(first, second);
 		std::pair<std::size_t, std::size_t> pair(std::max(first, second), std::min(first, second));
 		pair_lst.push_back(pair);
 		i += 2;
 	}
-	// printLst();
 	pair_lst.sort();
-	// printLst();
 	c_iter it = pair_lst.begin();
 	while (it != pair_lst.end())
 	{
@@ -135,16 +125,18 @@ PmergeMe::PmergeMe(int const argc, char const **argv)
 		pmend.push_back((*it).second);
 		it++;
 	}
-	std::list<std::size_t>::const_iterator	iter = pmend.begin();
-	while (iter != pmend.end())
+	std::list<std::size_t> jacob_seq = get_jacobsthal_seq(max);
+	std::list<std::size_t>::const_iterator	iter = jacob_seq.begin();
+	while (iter != jacob_seq.end())
 	{
-		std::list<std::size_t>::const_iterator m_lower_bound = std::lower_bound(main_.begin(), main_.end(), *iter);
-		main_.insert(m_lower_bound, *iter);
+		if (*iter <= pmend.size())
+		{
+			std::list<std::size_t>::const_iterator main_lower_bound = std::lower_bound(main_.begin(), main_.end(), *get_iter(*iter));
+			main_.insert(main_lower_bound, *get_iter(*iter));
+		}
 		iter++;
 	}
-	// printList();
-	std::list<std::size_t> jacob = get_jacobsthal_seq(20);
-	printList(jacob);
+	printList(main_);
 }
 
 PmergeMe::~PmergeMe()
@@ -166,21 +158,6 @@ PmergeMe &PmergeMe::operator=(PmergeMe const &rhs)
 	}
 	return (*this);
 }
-
-
-
-// template <typename C>
-// void	PmergeMe::printC(C const &c) const
-// {
-// 	std::stringstream ss;
-// 	typename C::const_iterator iter = c.begin();
-// 	for (; iter != c.end(); iter++)
-// 	{
-// 		ss << *iter << " ";
-// 		// std::cout << *iter << std::endl;
-// 	}
-// 	std::cout << ss.str() << std::endl;
-// 
 
 void	PmergeMe::printLst(void) const
 {
