@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:33:09 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/14 08:09:47 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/14 08:36:44 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,9 @@ PmergeMe::PmergeMe(int const argc, char const **argv)
 	validate_input(argc, argv);
 	std::size_t	i = 1;
 	std::size_t max = 0;
-	while (argv[i] && argv[i + 1])//todo 奇数対応
+	std::size_t	odd_left = 0;
+	bool		is_odd = false;
+	while (argv[i] && argv[i + 1])
 	{
 		std::size_t	first = std::strtoull(argv[i], NULL, 10);
 		std::size_t	second = std::strtoull(argv[i + 1], NULL, 10);
@@ -116,8 +118,15 @@ PmergeMe::PmergeMe(int const argc, char const **argv)
 		std::pair<std::size_t, std::size_t> pair(std::max(first, second), std::min(first, second));
 		pair_lst.push_back(pair);
 		i += 2;
+		if (argv[i + 1] == NULL)
+		{
+			is_odd = true;
+			odd_left = std::strtoull(argv[i], NULL, 10);
+		}
 	}
 	pair_lst.sort();
+	if (odd_left > max)
+		max = odd_left;
 	c_iter it = pair_lst.begin();
 	while (it != pair_lst.end())
 	{
@@ -125,6 +134,8 @@ PmergeMe::PmergeMe(int const argc, char const **argv)
 		pmend.push_back((*it).second);
 		it++;
 	}
+	if (is_odd)//todo fix oddleft == 0
+		pmend.push_back(odd_left);
 	std::list<std::size_t> jacob_seq = get_jacobsthal_seq(max);
 	std::list<std::size_t>::const_iterator	iter = jacob_seq.begin();
 	while (iter != jacob_seq.end())
@@ -170,4 +181,4 @@ void	PmergeMe::printLst(void) const
 	}
 }
 
-
+// https://codereview.stackexchange.com/questions/116367/ford-johnson-merge-insertion-sort
