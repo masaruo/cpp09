@@ -6,7 +6,7 @@
 /*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/10 19:10:43 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/13 16:51:35 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,23 @@
 #include <ostream>
 #include <utility>
 
-typedef std::pair<std::size_t, std::size_t> pair_t;
+typedef std::list<std::pair<std::size_t, std::size_t> >::const_iterator c_iter;
+typedef std::list<std::pair<std::size_t, std::size_t> >::const_reverse_iterator c_rev_iter;
+typedef std::list<std::pair<std::size_t, std::size_t> >::iterator iter;
 
 class PmergeMe
 {
 private:
-	std::list<pair_t> lst;
-	// std::list<std::pair<std::size_t, std::size_t> > lst;
-	// template <typename C>
-	// void	printC(C const &c) const;
+	std::list<std::pair<std::size_t, std::size_t> > pair_lst;
+	std::list<std::size_t> main_;
+	std::list<std::size_t> pmend;
+	std::list<std::size_t> jacob_seq;
 	PmergeMe();
 public:
-	PmergeMe(char const **argv);
+	PmergeMe(int const argc, char const **argv);
 	PmergeMe(PmergeMe const &rhs);
 	~PmergeMe();
 	PmergeMe &operator=(PmergeMe const &rhs);
-	// void	printLst(void) const;
+	void	printLst(void) const;
+	// void	printList() const;
 };
