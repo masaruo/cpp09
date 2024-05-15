@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
+#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/04/30 16:46:35 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/15 11:23:28 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,6 +72,12 @@ re: fclean
 
 dev: all
 	./$(TARGET)
+
+test:
+	./$(TARGET) "8 9 * 9 - 9 - 9 - 4 - 1 +"
+	./$(TARGET) "7 7 * 7 -"
+	./$(TARGET) "1 2 * 2 / 2 * 2 4 - +"
+	./$(TARGET) "(1 + 1)"
 
 -include $(DEP)
 
