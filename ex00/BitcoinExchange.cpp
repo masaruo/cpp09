@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/09 15:21:51 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/15 11:32:31 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	BitcoinExchange::assert_correct_value_range(std::string const &value, std::
 {
 	for (string_iter i = value.begin(); i != value.end(); i++)
 	{
-		if (!std::isdigit(*i) && *i != '-' && *i != '+')
+		if (!std::isdigit(*i) && *i != '-' && *i != '+' && *i != '.')
 			throw(BtcBadInput(buf));
 	}
 	double	const val_d = std::atof(value.c_str());
