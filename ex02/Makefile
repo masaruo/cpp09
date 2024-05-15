@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
+#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/09 17:47:49 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/15 11:15:28 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,6 @@ GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/inclu
 GTEST_LIB	:=	-L../googletest/build/lib
 INC			:=	-I../include
 SRC			=	 \
-				PmergeMe.cpp \
 				main.cpp
 SRCDIR		:=	.
 OBJDIR		:=	obj
@@ -74,6 +73,14 @@ re: fclean
 dev: debug
 	./$(TARGET)
 
+shuf:
+	$(MAKE) all
+	./$(TARGET) `gshuf -i 1-100000 -n 3000 | tr "\n" " "`
+
+jot:
+	$(MAKE) all
+	./$(TARGET) `jot -r 3000 1 100000 | tr '\n' ' '`
+
 -include $(DEP)
 
-.PHONY: clean fclean re dev
+.PHONY: clean fclean re
