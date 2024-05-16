@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
+/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:29:00 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/15 09:55:31 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/16 14:52:18 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,24 @@ public:
 	public:
 		char const	*what() const throw ();
 	};
+	class RPNOverflowException
+	{
+	private:
+		std::string	err_msg;
+		RPNOverflowException();
+	public:
+		explicit RPNOverflowException(std::string const &e);
+		char const *what() const throw ();
+	};
 };
+
+// ./RPN.hpp:45:8: error: exception specification of overriding function is more lax than base version
+//         class RPNOverflowException : public std::overflow_error
+//               ^
+// /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdexcept:168:13: note: overridden virtual function
+//       is here
+//     virtual ~overflow_error() _NOEXCEPT;
+//             ^
+// 1 error generated.
 
 #endif

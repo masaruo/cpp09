@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
+/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/02 23:50:16 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/16 14:59:28 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
+#include <limits>
 
 int const SPACE = ' ';
 
@@ -27,16 +28,24 @@ static int	is_operator(int c)
 
 int	RPN::get_calc_num(int first, int last, int opter)
 {
+	int	ans = 0;
 	switch (opter)
 	{
 		case ('*'):
-			return (first * last);
+			if (__builtin_smul_overflow(first, last, &ans))
+				throw (RPNOverflowException("mul overflow."));
+			return (ans);
+			// return (first * last);
 		case ('+'):
-			return (first + last);
+			if (__builtin_sadd_overflow(first, last, &ans))
+				throw (RPNOverflowException("add overflow."));
+			return (ans);
 		case ('-'):
-			return (first - last);
+			if (__builtin_ssub_overflow(first, last, &ans))
+				throw (RPNOverflowException("minus overflow"));
+			return (ans);
 		case ('/'):
-			if (last == 0)
+			if (last == 0 || (first == std::numeric_limits<int>::min() && last == -1))
 			{
 				throw (ZeroDivisionException());
 				break ;
@@ -80,9 +89,15 @@ void	RPN::calculate(std::string const &num)
 				answer = get_calc_num(first_, last_, ch);
 				this->stack_.push(answer);
 			}
+			catch(RPNOverflowException const &e)
+			{
+				std::cerr << e.what() << std::endl;
+				std::cout << "Error" << std::endl;
+				std::exit(1);
+			}
 			catch(std::exception const &e)
 			{
-				// std::cerr << e.what() << std::endl;
+				std::cerr << e.what() << std::endl;
 				std::cout << "Error" << std::endl;
 				std::exit(1);
 			}
@@ -134,4 +149,15 @@ RPN	&RPN::operator=(RPN const &rhs)
 char const	*RPN::ZeroDivisionException::what() const throw ()
 {
 	return ("Zero Division.");
+}
+
+RPN::RPNOverflowException::RPNOverflowException(std::string const &e)
+:err_msg(e)
+{
+	return ;
+}
+
+char const *RPN::RPNOverflowException::what() const throw ()
+{
+	return (err_msg.c_str());
 }
