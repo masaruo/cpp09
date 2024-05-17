@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+         #
+#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/09 15:11:16 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/17 08:48:15 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ DEP			:=	$(SRC:%.cpp=$(OBJDIR)/%.d)
 
 ifdef WITH_GTEST
 CXXFLAGS	:=	-Wall -Wextra -std=c++17 $(GTEST_INC) -g3 -O0
-LDFLAGS		:=	$(GTEST_LIB) -lpthread -lgtest -lgtest_main -lgmock 
+LDFLAGS		:=	$(GTEST_LIB) -pthread -lgtest -lgtest_main -lgmock 
 SRC			=	Fixed.gtest.cpp Fixed.cpp
 endif
 
@@ -38,8 +38,8 @@ endif
 
 ifdef WITH_ASAN
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
-CXXFLAGS	+=	-g3 -O0 -fsanitize=address
-LDFLAGS		=	-fsanitize=address
+CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined
+LDFLAGS		+=	-fsanitize=address,undefined
 endif
 
 all: $(TARGET)

@@ -3,66 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/09 15:15:18 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/17 19:05:44 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <map>
-#include <string>
-#include <stdexcept>
-
-class BitcoinExchange;
-typedef void	(BitcoinExchange::*f)(std::string const &buf);
-typedef std::map<std::string, double>::const_iterator map_iter;
-typedef std::string::const_iterator	string_iter;
+#include <utility>
+#include <sstream>
+#include <functional>
 
 class BitcoinExchange
 {
 private:
-	std::map<std::string, double>	rate_;
-	//helper funcs
-	void		parseData(std::string const &file, f fptr);
-	void		parse_data_csv(std::string const &buf);
-	void		input_handler(std::string const &buf);//コンストにしたいが、関数ポインタのか型地が異なってしまう
-	map_iter	get_spot_or_lower_iter(std::string const &key) const;
-	void		assert_correct_value_range(std::string const &value, std::string const &buf) const;
-	void		assert_correct_input(std::string const &date, std::string const &buf, std::string const &value) const;
-	void		assert_date_correct(std::string const &date, std::string const &buf) const;
-	//hidden constructor
-	BitcoinExchange();
+//*typedef
+	typedef std::map<std::string, double, std::greater<std::string> >	btc_map;
+	typedef btc_map::const_iterator	itr;
+	typedef std::pair<std::string, double>	btc_pair;
+	typedef bool(BitcoinExchange::*F)(std::string const &line);
+	static std::string DIGITS;
+//container
+	btc_map	px_;
+//helper
+	void	for_each_line(char const *file, F func);
+	bool	parse_data_csv(std::string const &line);
+	bool	input_handler(std::string const &line);
+	void	assert_input_format(std::string const &line, std::string &date, std::string &value);
+	void	assert_input_date(std::string const &line, std::string const &date);
+	void	assert_input_value(std::string const &line, std::string const &value);
+	double	get_px(std::string const &key) const;
 public:
-	BitcoinExchange(std::string const &file);
-	BitcoinExchange(BitcoinExchange const &rhs);
+	BitcoinExchange();
+	// BitcoinExchange(char const *file);
 	~BitcoinExchange();
+	BitcoinExchange(BitcoinExchange const &rhs);
 	BitcoinExchange &operator=(BitcoinExchange const &rhs);
+	void	calculate(char const **argv);
 
-	class BTCException : public std::logic_error
+//! exceptions
+	class BTCException
 	{
 	public:
-		BTCException();//! need constructor to inherit non std::exception
-		virtual char const	*what() const throw();
+		virtual std::string const what() const;
 	};
-	class BtcNegativeValueException : public BTCException
-	{
-	public:
-		char const	*what() const throw();
-	};
-	class BtcTooLargeValueException : public BTCException
-	{
-	public:
-		char const	*what() const throw();
-	};
-	class BtcBadInput
+	class BTCBadInputException : public BTCException
 	{
 	private:
-		std::string	const error_msg;
+		std::string	err_msg;
 	public:
-		BtcBadInput(std::string const &inMsg);//! this way can get msg to error class
-		char const	*what() const throw();
-		// https://stackoverflow.com/questions/53829852/exception-specification-of-overriding-function-is-more-lax-than-base-version
+		BTCBadInputException(std::string const &inMsg);
+		std::string const what() const;
+	};
+	class BTCNegativeNumException : public BTCException
+	{
+	public:
+		std::string const what() const;
+	};
+	class BTCTooLargeNumException : public BTCException
+	{
+	public:
+		std::string const what() const;
 	};
 };
+
+// noexceptの使用ができないため、std::exceptionなどからのerror処理の継承を諦める。
+/*
+./BitcoinExchange.hpp:40:8: error: exception specification of overriding function is more lax than base version
+        class BTCException : std::exception
+              ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__exception/exception.h:77:11: note: overridden virtual function is here
+  virtual ~exception() _NOEXCEPT;
+*/

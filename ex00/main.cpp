@@ -3,35 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/03 00:34:04 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/09 15:04:39 by mogawa           ###   ########.fr       */
+/*   Created: 2024/05/17 08:43:33 by mogawa            #+#    #+#             */
+/*   Updated: 2024/05/17 19:04:07 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-#include <iostream>
+#include "iostream"
+#include <exception>
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	try
 	{
-		if (argc != 2)
+		if (argc == 1)
+		{
 			throw (std::invalid_argument("Error: could not open file."));
-		BitcoinExchange btc(argv[1]);
-	}
-	catch(std::invalid_argument const &e)
-	{
-		std::cout << e.what() << std::endl;
+			return (1);
+		}
+		BitcoinExchange	btc;
+		btc.calculate(const_cast<char const**>(argv));
 	}
 	catch(const std::exception& e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << e.what() << '\n';
 	}
-	catch(...)
-	{
-		std::cout << "some error detected." << std::endl;
-	}
-	return (0);
 }
