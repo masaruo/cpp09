@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/17 20:40:02 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/18 15:57:09 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,8 +37,8 @@ endif
 
 ifdef WITH_ASAN
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
-CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined,memory
-LDFLAGS		:=	-fsanitize=address,undefined,memory
+CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined
+LDFLAGS		:=	-fsanitize=address,undefined
 endif
 
 all: $(TARGET)
@@ -84,17 +84,3 @@ jot:
 -include $(DEP)
 
 .PHONY: clean fclean re
-
-# To use the bundled libc++ please add the following LDFLAGS:
-#   LDFLAGS="-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
-
-# llvm is keg-only, which means it was not symlinked into /opt/homebrew,
-# because macOS already provides this software and installing another version in
-# parallel can cause all kinds of trouble.
-
-# If you need to have llvm first in your PATH, run:
-#   echo 'export PATH="/opt/homebrew/opt/llvm/bin:$PATH"' >> ~/.zshrc
-
-# For compilers to find llvm you may need to set:
-#   export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
-# export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
