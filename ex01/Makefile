@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/15 11:23:28 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/16 23:45:03 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,8 @@ CXXFLAGS	=	-Wall -Wextra -g3 -O0 -DDEBUG
 endif
 
 ifdef WITH_ASAN
-CXXFLAGS	=	-Wall -Wextra -g3 -O0 -fsanitize=address
+CXXFLAGS	=	-Wall -Wextra -g3 -O0 -fsanitize=address,undefined,leak
+LDFLAGS		+=	-fsanitize=address,undefined,leak
 endif
 
 all: $(TARGET)
@@ -47,7 +48,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 
 $(TARGET):	$(OBJ)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) $^ -o $@
 
 # gtest: fclean
 # 	$(MAKE) all WITH_GTEST=1
@@ -55,11 +56,9 @@ $(TARGET):	$(OBJ)
 
 leak: fclean
 	$(MAKE) all WITH_LEAK=1
-	./$(TARGET)
 
 debug: fclean
 	$(MAKE) all WITH_ASAN=1
-	./$(TARGET)
 
 clean:
 	$(RM) -r $(OBJDIR)

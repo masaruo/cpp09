@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/15 11:18:13 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/17 20:36:53 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void	print_duration(std::size_t argc_, std::string const &container, double dura
 	ss << argc_;
 	ss << " elements with std::" << container << " : ";
 	ss << std::fixed << duration << " ms";
-	std::cout << ss.str() << std::endl;
 }
 
 int	main(int argc, char **argv)

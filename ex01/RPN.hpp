@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:29:00 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/16 14:52:18 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/16 23:48:00 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
 		RPNException():std::runtime_error("RPN Error."){};// constructorが必要
 		virtual char const	*what() const throw () = 0;
 	};
-	class ZeroDivisionException : public RPNException
+	class DivisionException : public RPNException
 	{
 	public:
 		char const	*what() const throw ();

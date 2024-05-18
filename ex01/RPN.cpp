@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42tokyo.jp>         +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/16 14:59:28 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/17 19:22:58 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ int	RPN::get_calc_num(int first, int last, int opter)
 			if (__builtin_smul_overflow(first, last, &ans))
 				throw (RPNOverflowException("mul overflow."));
 			return (ans);
-			// return (first * last);
 		case ('+'):
 			if (__builtin_sadd_overflow(first, last, &ans))
 				throw (RPNOverflowException("add overflow."));
@@ -47,7 +46,7 @@ int	RPN::get_calc_num(int first, int last, int opter)
 		case ('/'):
 			if (last == 0 || (first == std::numeric_limits<int>::min() && last == -1))
 			{
-				throw (ZeroDivisionException());
+				throw (DivisionException());
 				break ;
 			}
 			else
@@ -76,31 +75,15 @@ void	RPN::calculate(std::string const &num)
 		{
 			if (stack_.size() < 2)
 			{
-				std::cout << "Error" << std::endl;
-				std::exit(1);
+				throw (std::invalid_argument("Error"));
 			}
 			int const last_ = this->stack_.top();
 			this->stack_.pop();
 			int const first_ = this->stack_.top();
 			this->stack_.pop();
 			int	answer = 0;
-			try
-			{
-				answer = get_calc_num(first_, last_, ch);
-				this->stack_.push(answer);
-			}
-			catch(RPNOverflowException const &e)
-			{
-				std::cerr << e.what() << std::endl;
-				std::cout << "Error" << std::endl;
-				std::exit(1);
-			}
-			catch(std::exception const &e)
-			{
-				std::cerr << e.what() << std::endl;
-				std::cout << "Error" << std::endl;
-				std::exit(1);
-			}
+			answer = get_calc_num(first_, last_, ch);
+			this->stack_.push(answer);
 			iter++;
 		}
 		else if (ch == SPACE)
@@ -116,8 +99,7 @@ void	RPN::calculate(std::string const &num)
 	}
 	if (this->stack_.size() != 1)
 	{
-		std::cout << "Error" << std::endl;
-		std::exit(1);
+		throw (std::invalid_argument("Error"));
 	}
 	std::cout << stack_.top() << std::endl;
 }
@@ -146,7 +128,7 @@ RPN	&RPN::operator=(RPN const &rhs)
 	return (*this);
 }
 
-char const	*RPN::ZeroDivisionException::what() const throw ()
+char const	*RPN::DivisionException::what() const throw ()
 {
 	return ("Zero Division.");
 }
