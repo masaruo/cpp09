@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/18 15:57:09 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/19 22:48:47 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/inclu
 GTEST_LIB	:=	-L../googletest/build/lib
 INC			:=	-I../include
 SRC			=	 \
+				XString.cpp \
 				main.cpp
 SRCDIR		:=	.
 OBJDIR		:=	obj
