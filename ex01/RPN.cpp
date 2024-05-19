@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/17 19:22:58 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/19 14:59:14 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <limits>
+#include "SafeSignedIntMath.hpp"
 
 int const SPACE = ' ';
 
@@ -28,31 +29,16 @@ static int	is_operator(int c)
 
 int	RPN::get_calc_num(int first, int last, int opter)
 {
-	int	ans = 0;
 	switch (opter)
 	{
 		case ('*'):
-			if (__builtin_smul_overflow(first, last, &ans))
-				throw (RPNOverflowException("mul overflow."));
-			return (ans);
+			return (SafeSignedIntMath<int>::mul(first, last));
 		case ('+'):
-			if (__builtin_sadd_overflow(first, last, &ans))
-				throw (RPNOverflowException("add overflow."));
-			return (ans);
+			return (SafeSignedIntMath<int>::add(first, last));
 		case ('-'):
-			if (__builtin_ssub_overflow(first, last, &ans))
-				throw (RPNOverflowException("minus overflow"));
-			return (ans);
+			return (SafeSignedIntMath<int>::sub(first, last));
 		case ('/'):
-			if (last == 0 || (first == std::numeric_limits<int>::min() && last == -1))
-			{
-				throw (DivisionException());
-				break ;
-			}
-			else
-			{
-				return (first / last);
-			}
+			return (SafeSignedIntMath<int>::div(first, last));
 		default:
 			return (0);
 	}

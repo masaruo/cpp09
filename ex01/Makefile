@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/16 23:45:03 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/19 14:58:52 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,8 +37,8 @@ CXXFLAGS	=	-Wall -Wextra -g3 -O0 -DDEBUG
 endif
 
 ifdef WITH_ASAN
-CXXFLAGS	=	-Wall -Wextra -g3 -O0 -fsanitize=address,undefined,leak
-LDFLAGS		+=	-fsanitize=address,undefined,leak
+CXXFLAGS	=	-Wall -Wextra -g3 -O0 -fsanitize=address,undefined
+LDFLAGS		+=	-fsanitize=address,undefined
 endif
 
 all: $(TARGET)
