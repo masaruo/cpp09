@@ -6,17 +6,18 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/19 22:48:47 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/21 15:43:16 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET		:=	PmergeMe
 CXX			:=	c++
 CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -Wconversion -pedantic-errors -std=c++98 -MMD -MP
+# CXXFLAGS	:=	-Wall -Wshadow -Wconversion -pedantic-errors -MMD -MP
 LDFLAGS		:=	
 GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/include
 GTEST_LIB	:=	-L../googletest/build/lib
-INC			:=	-I../include
+INC			:=	-I../include -I./include
 SRC			=	 \
 				XString.cpp \
 				main.cpp
@@ -72,7 +73,7 @@ re: fclean
 	$(MAKE) all
 
 dev: debug
-	./$(TARGET)
+	./$(TARGET) "9 2 21 15 20 3 7 1 6 11 17 4 19 16 10 13 18 5 12 22 8 14"
 
 shuf:
 	$(MAKE) all

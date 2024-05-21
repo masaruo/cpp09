@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/20 03:20:27 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/20 16:40:53 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 int	main(int argc, char **argv)
 {
 	//todo argc
-	PmergeMe<std::vector<std::size_t> > pm(const_cast<char const **>(argv));
+	PmergeMe<std::vector<std::size_t> >pm(const_cast<char const **>(argv));
+	pm.sort_start();
 	return (0);
 }
