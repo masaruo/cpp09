@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/22 08:16:11 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/22 15:13:14 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,13 @@
 // 	ss << std::fixed << duration << " ms";
 // }
 
+
+
 int	main(int argc, char **argv)
 {
 	//todo argc
 	PmergeMe<std::vector<std::size_t> >pm(const_cast<char const **>(argv));
-	// pm.sort_start();
+	pm.sort_start();
+	pm.print();
 	return (0);
 }
