@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/22 15:13:29 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/22 16:25:55 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <deque>
 #include <limits>
 #include <iterator>
+#include <exception>
+#include <stdexcept>
 
 template <typename Con>
 class PmergeMe
@@ -31,40 +33,25 @@ public: //typedef
 	typedef typename Con::size_type			con_size_t;
 	typedef typename Con::difference_type	diff_t;
 
-// class Pair
-// {
-// private:
-// 	// Pair(){};
-// 	Pair(Pair const &rhs){ (void) rhs; }
-// 	Pair &operator=(Pair const &rhs){ (void) rhs; return *this; }
-// public:
-// 	Con	pmend;
-// 	Con	main;
-// 	Pair(){};
-// 	~Pair(){};
-// 	void sort_copy(Pair &ascending_pair , Pair const &decending_pair);
-// };
-
 private:
-	Con		argv_seq;
-	Con		jacob_seq;
-	Con		sorted_seq;
-	double	duration;
-	PmergeMe();//hidden
-	void		gen_argv_seq(char const **argv);
-	void		gen_jacob_seq(con_size_t size);
-	// void		merge_insert_sort(Con *prev_main, Con *prev_pmend);
+	Con			argv_seq;
+	Con			jacob_seq;
+	Con			sorted_seq;
+	double		duration;
+	con_size_t	valid_argc;
+	void	gen_argv_seq(char const **argv);
+	void	gen_jacob_seq(con_size_t size);
 	Con		merge_insert_sort(Con *prev_main, Con *prev_pmend);
-	// void		merge();
-	// void		insert();
+	PmergeMe();//hidden
+	PmergeMe(PmergeMe const &rhs);
 public:
 	PmergeMe(char const **argv);
-	PmergeMe(PmergeMe const &rhs);
 	~PmergeMe();
 	PmergeMe &operator=(PmergeMe const &rhs);
-	void	sort_start(void);
-	double	get_duration(void) const;
-	void	print(void) const;
+	void		sort_start(void);
+	double		get_duration(void) const;
+	std::size_t	get_valid_argc(void) const;
+	void		print(void) const;
 };
 
 static void put(std::size_t const &n)
@@ -75,7 +62,11 @@ static void put(std::size_t const &n)
 template <typename Con>
 void	PmergeMe<Con>::print(void) const
 {
+	std:: cout << "Before: ";
+	std::for_each(argv_seq.begin(), argv_seq.end(), &put);
+	std::cout << std::endl << "After: ";
 	std::for_each(sorted_seq.begin(), sorted_seq.end(), &put);
+	std::cout << std::endl;
 }
 
 template <typename Con>
@@ -85,7 +76,9 @@ template <typename Con>
 PmergeMe<Con>::PmergeMe(char const **argv)
 {
 	gen_argv_seq(argv);
-	gen_jacob_seq(argv_seq.size() / 2 + 1);
+	valid_argc = argv_seq.size();
+	gen_jacob_seq(valid_argc + 1);
+	std::for_each(jacob_seq.begin(), jacob_seq.end(), &put);//delete;
 }
 
 template <typename Con>
@@ -97,14 +90,14 @@ PmergeMe<Con>::~PmergeMe()
 template <typename Con>
 PmergeMe<Con>::PmergeMe(PmergeMe const &rhs)
 {
-	//todo
+	(void) rhs;
 	return ;
 }
 
 template <typename Con>
 PmergeMe<Con>	&PmergeMe<Con>::operator=(PmergeMe const &rhs)
 {
-	//todo
+	(void) rhs;
 	return (*this);
 }
 
@@ -112,7 +105,9 @@ static bool	is_valid_number(xString const &num_str, std::size_t num_ui)
 {
 	bool	is_valid = true;
 
-	if (num_str.empty())
+	if (num_str.contain_any_of("-"))
+		throw (std::invalid_argument("Error"));
+	else if (num_str.empty())
 		is_valid = false;
 	else if (num_str.contain_not_of("0123456789"))
 		is_valid = false;
@@ -169,15 +164,19 @@ double	PmergeMe<Con>::get_duration(void) const
 }
 
 template <typename Con>
+std::size_t	PmergeMe<Con>::get_valid_argc(void) const
+{
+	return (valid_argc);
+}
+
+template <typename Con>
 void	PmergeMe<Con>::sort_start(void)
 {
 	Con	sorting = argv_seq;
 	std::time_t	start = std::time(NULL);
-	Con dummy;
-	Con main;
-	//todo sorts
-	main = merge_insert_sort(NULL, NULL);
-	sorted_seq = main;
+	Con	sorted;
+	sorted = merge_insert_sort(NULL, NULL);
+	sorted_seq = sorted;
 	std::time_t	end = std::time(NULL);
 	duration = static_cast<double>((start - end)) / CLOCKS_PER_SEC * 1000.0;
 }
@@ -186,9 +185,8 @@ template <typename Con>
 Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 {
 	Con			main, pmend;
-	// Pair		pair;
+
 	//!Ascend merge part
-	//todo if elem == 1 or == 2
 	if (prev_main == NULL)
 	{
 		main = argv_seq;
@@ -198,7 +196,6 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 		cit_t		crnt = prev_main->begin();
 		cit_t		next = prev_main->begin() + 1;
 		cit_t		end = prev_main->end();
-		con_size_t	size = prev_main->size();
 
 		while (crnt != end && next != end)
 		{
@@ -208,17 +205,20 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 		}
 		if (crnt != end)
 			pmend.push_back(*crnt);
-		// pair.main = main;
-		// pair.pmend = pmend;
 	}
-	if (main.size() > 2)
+	if (main.size() > 1)
 	{
 		merge_insert_sort(&main, &pmend);
 	}
 	//!Decend insert part
 	// mainにpmendを挿入
-	for (cit_t pmend_it = pmend.begin(); pmend_it != pmend.end(); pmend_it++)//change to jacob
+	// for (cit_t pmend_it = pmend.begin(); pmend_it != pmend.end(); pmend_it++)//change to jacob
+	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
 	{
+		cit_t	pmend_it = pmend.begin();
+		if (*jacob_it >= pmend.size())
+			continue ;
+		std::advance(pmend_it, *jacob_it);
 		cit_t	pos = std::lower_bound(main.begin(), main.end(), *pmend_it);
 		main.insert(pos, *pmend_it);
 	}
@@ -226,6 +226,8 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 	{
 		return (main);
 	}
+	//* 1: 新メインをループ。それぞれの要素がprev_mainのどこのINDEXかを見つける
+	//* 2: 当該INDEXのprev_pmendの数字をsorted_pmendにpush back
 	Con	sorted_pmend;
 	for (cit_t main_it = main.begin(); main_it != main.end(); main_it++)
 	{
@@ -234,39 +236,12 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 		{
 			cit_t prev_begin = prev_main->begin();
 			diff_t	idx = std::distance(prev_begin, pos);
-			// cit_t	tmp = prev_main->begin();
-			// std::advance(tmp, idx);
-			// std::size_t	num_in_pmend = *tmp;
-			// cit_t	pmend_insert = std::find(main.begin(), main.end(), *main_it);
-			// if (prev_pmend->empty())
-			// 	break ;
 			if (prev_pmend->empty())
 				break ;
-			sorted_pmend.push_back(prev_pmend->at(idx));
-			// if (pmend_insert != main.end())
-			// {
-			// 	cit_t main_begin = main.begin();
-			// 	diff_t	idx = std::distance(main_begin, pos);
-			// 	sorted_pmend.at(idx) = num_in_pmend;
-			// }
+			sorted_pmend.push_back(prev_pmend->at(static_cast<std::size_t>(idx)));
 		}
 	}
 	*prev_main = main;
 	*prev_pmend = sorted_pmend;
 	return (main);
 }
-
-// template <typename Con>
-// void	sort_copy(Pair &ascending_pair, Pair const &decending_pair)
-// {
-// 	cit_t	it_decend_main = decending_pair.main.begin();
-
-// 	while (it_decend_main != deceding_pair.main.end())
-// 	{
-// 		cit_t pos_in_assend_main = std::find(ascending_pair.main.begin(), ascending_pair.main.end(), *it_decend_main);
-// 		if (pos_in_assend_main != ascending_pair.main.end())
-// 		{
-			
-// 		}
-// 		it_decnd_main++;
-// 	}
