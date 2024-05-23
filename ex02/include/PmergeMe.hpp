@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/23 11:01:22 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/23 11:31:27 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,6 @@ PmergeMe<Con>::PmergeMe(char const **argv)
 	gen_argv_seq(argv);
 	valid_argc = argv_seq.size();
 	gen_jacob_seq(valid_argc + 1);
-	std::for_each(jacob_seq.begin(), jacob_seq.end(), &put);//delete;
-	std::cout << std::endl;
 }
 
 template <typename Con>
@@ -112,21 +110,18 @@ PmergeMe<Con>	&PmergeMe<Con>::operator=(PmergeMe const &rhs)
 	return (*this);
 }
 
-static bool	is_valid_number(xString const &num_str, std::size_t num_ui)
+static void	assert_valid_number(xString const &num_str, std::size_t num_ui)
 {
-	bool	is_valid = true;
-
 	if (num_str.contain_any_of("-"))
 		throw (std::invalid_argument("Error"));
 	else if (num_str.empty())
-		is_valid = false;
+		throw (std::invalid_argument("Error"));
 	else if (num_str.contain_not_of("0123456789"))
-		is_valid = false;
+		throw (std::invalid_argument("Error"));
 	else if (num_ui == std::numeric_limits<std::size_t>::max())
-		is_valid = false;
+		throw (std::invalid_argument("Error"));
 	else if (num_str != "0" && num_ui == 0)
-		is_valid = false;
-	return (is_valid);
+		throw (std::invalid_argument("Error"));
 }
 
 template <typename Con>
@@ -138,8 +133,7 @@ void	PmergeMe<Con>::gen_argv_seq(char const **argv)
 		std::stringstream num_ss(num_str);
 		std::size_t	num_ui;
 		num_ss >> num_ui;
-		if (!is_valid_number(num_str, num_ui))
-			continue ;
+		assert_valid_number(num_str, num_ui);
 		argv_seq.push_back(num_ui);
 	}
 }
@@ -181,16 +175,15 @@ std::size_t	PmergeMe<Con>::get_valid_argc(void) const
 	return (valid_argc);
 }
 
+#include <sys/time.h>
+
 template <typename Con>
 void	PmergeMe<Con>::sort_start(void)
 {
-	Con	sorting = argv_seq;
-	std::time_t	start = std::time(NULL);
-	Con	sorted;
-	sorted = merge_insert_sort(NULL, NULL);
-	sorted_seq = sorted;
-	std::time_t	end = std::time(NULL);
-	duration = static_cast<double>((start - end)) / CLOCKS_PER_SEC * 1000.0;
+	std::clock_t start = std::clock();
+	sorted_seq = merge_insert_sort(NULL, NULL);
+	std::clock_t end = std::clock();
+	duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
 
 template <typename Con>
@@ -218,17 +211,13 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 		if (crnt != end)
 			pmend.push_back(*crnt);
 	}
+
 	if (main.size() > 1)
 	{
 		merge_insert_sort(&main, &pmend);
 	}
+
 	//!Decend insert part
-	// mainにpmendを挿入
-	// for (cit_t pmend_it = pmend.begin(); pmend_it != pmend.end(); pmend_it++)//change to jacob
-	// {
-	// 	cit_t	pos = std::lower_bound(main.begin(), main.end(), *pmend_it);
-	// 	main.insert(pos, *pmend_it);
-	// }
 
 	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
 	{

@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/22 23:06:38 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/23 11:32:48 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,10 @@ int	main(int argc, char **argv)
 		deque_sort.sort_start();
 		std::cout << BLUE;
 		vec_sort.print();
+		std::cout << MAGENTA;
 		print_duration(vec_sort.get_valid_argc(), "vector", vec_sort.get_duration());
 		std::cout << YELLOW;
-		deque_sort.print();
+		// deque_sort.print();
 		print_duration(deque_sort.get_valid_argc(), "deque", deque_sort.get_duration());
 		std::cout << RESET;
 	}
