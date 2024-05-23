@@ -3,17 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
+#    By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/23 11:14:44 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/24 08:57:24 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 TARGET		:=	PmergeMe
 CXX			:=	c++
-CXXFLAGS	:=	-Wall -Wextra -Werror -Wshadow -Wconversion -pedantic-errors -std=c++98 -MMD -MP
-# CXXFLAGS	:=	-Wall -Wshadow -Wconversion -pedantic-errors -MMD -MP
+CXXFLAGS	:=	-Wall -Wextra -Werror -std=c++98 -MMD -MP
 LDFLAGS		:=	
 GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/include
 GTEST_LIB	:=	-L../googletest/build/lib
@@ -39,7 +38,7 @@ endif
 
 ifdef WITH_ASAN
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
-CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined
+CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined -Wshadow -Wconversion -Wno-sign-conversion -pedantic-errors
 LDFLAGS		:=	-fsanitize=address,undefined
 endif
 
