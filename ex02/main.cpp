@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/23 11:32:48 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/24 08:42:49 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 #include <vector>
 #include <sstream>
 #include "color.hpp"
-#include "iomanip"
-
-//! jacob の順番！
+#include <exception>
 
 void	print_duration(std::size_t argc_, std::string const &container, double duration)
 {
@@ -29,8 +27,6 @@ void	print_duration(std::size_t argc_, std::string const &container, double dura
 	ss << std::fixed << duration << " ms";
 	std::cout << ss.str() << std::endl;
 }
-
-
 
 int	main(int argc, char **argv)
 {

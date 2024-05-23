@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/23 21:45:35 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/24 08:44:20 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 #include "XString.hpp"
 #include <iostream>
 #include <sstream>
-#include <utility>
+// #include <utility>
 #include <ctime>
-#include <algorithm>
-#include <vector>
-#include <deque>
-#include <limits>
-#include <iterator>
-#include <exception>
-#include <stdexcept>
+// #include <algorithm>
+// #include <vector>
+// #include <deque>
+// #include <limits>
+// #include <iterator>
+// #include <exception>
+// #include <stdexcept>
 
 template <typename Con>
 class PmergeMe
@@ -185,11 +185,12 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 {
 	Con			main, pmend;
 
-	//!Ascend merge part
 	if (prev_main == NULL)
 	{
 		main = argv_seq;
 	}
+
+	//!Ascend merge part
 	else
 	{
 		cit_t		crnt = prev_main->begin();
@@ -206,13 +207,14 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 			pmend.push_back(*crnt);
 	}
 
+	//! Recursion
 	if (main.size() > 1)
 	{
 		merge_insert_sort(&main, &pmend);
 	}
 
 	//!Decend insert part
-
+	//jacobの順番に沿ってpmendの数字をmainに戻す
 	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
 	{
 		cit_t	pmend_it = pmend.begin();
