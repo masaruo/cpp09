@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/22 16:25:55 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/23 11:01:22 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ private:
 	void	gen_argv_seq(char const **argv);
 	void	gen_jacob_seq(con_size_t size);
 	Con		merge_insert_sort(Con *prev_main, Con *prev_pmend);
+	void	print_con(Con const &con) const;
 	PmergeMe();//hidden
 	PmergeMe(PmergeMe const &rhs);
 public:
@@ -60,11 +61,20 @@ static void put(std::size_t const &n)
 }
 
 template <typename Con>
+void	PmergeMe<Con>::print_con(Con const &con) const
+{
+	cit_t	beg = con.begin();
+	cit_t	end = con.end();
+
+	std::for_each(beg, end, &put);
+}
+
+template <typename Con>
 void	PmergeMe<Con>::print(void) const
 {
 	std:: cout << "Before: ";
 	std::for_each(argv_seq.begin(), argv_seq.end(), &put);
-	std::cout << std::endl << "After: ";
+	std::cout << std::endl << "After : ";
 	std::for_each(sorted_seq.begin(), sorted_seq.end(), &put);
 	std::cout << std::endl;
 }
@@ -79,6 +89,7 @@ PmergeMe<Con>::PmergeMe(char const **argv)
 	valid_argc = argv_seq.size();
 	gen_jacob_seq(valid_argc + 1);
 	std::for_each(jacob_seq.begin(), jacob_seq.end(), &put);//delete;
+	std::cout << std::endl;
 }
 
 template <typename Con>
@@ -141,7 +152,7 @@ void	PmergeMe<Con>::gen_jacob_seq(con_size_t size)
 	con_size_t	jacob = 0;
 
 	jacob_seq.push_back(0);
-	while (jacob < size)
+	while (true)
 	{
 		jacob = prev + (2 * before_prev);
 		jacob_seq.push_back(jacob);
@@ -153,6 +164,7 @@ void	PmergeMe<Con>::gen_jacob_seq(con_size_t size)
 			break ;
 		before_prev = prev;
 		prev = jacob;
+		jacob++;
 	}
 	return ;
 }
@@ -213,6 +225,11 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 	//!Decend insert part
 	// mainにpmendを挿入
 	// for (cit_t pmend_it = pmend.begin(); pmend_it != pmend.end(); pmend_it++)//change to jacob
+	// {
+	// 	cit_t	pos = std::lower_bound(main.begin(), main.end(), *pmend_it);
+	// 	main.insert(pos, *pmend_it);
+	// }
+
 	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
 	{
 		cit_t	pmend_it = pmend.begin();
@@ -229,6 +246,7 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 	//* 1: 新メインをループ。それぞれの要素がprev_mainのどこのINDEXかを見つける
 	//* 2: 当該INDEXのprev_pmendの数字をsorted_pmendにpush back
 	Con	sorted_pmend;
+	std::size_t	cnt = 0;
 	for (cit_t main_it = main.begin(); main_it != main.end(); main_it++)
 	{
 		cit_t	pos = std::find(prev_main->begin(), prev_main->end(), *main_it);
@@ -239,9 +257,16 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 			if (prev_pmend->empty())
 				break ;
 			sorted_pmend.push_back(prev_pmend->at(static_cast<std::size_t>(idx)));
+			cnt++;
 		}
+	}
+	while (cnt < prev_pmend->size())
+	{
+		sorted_pmend.push_back(prev_pmend->at(cnt));
+		cnt++;
 	}
 	*prev_main = main;
 	*prev_pmend = sorted_pmend;
+
 	return (main);
 }
