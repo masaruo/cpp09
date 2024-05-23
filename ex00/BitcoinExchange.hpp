@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/17 19:05:44 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/24 08:29:55 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class BitcoinExchange
 {
 private:
 //*typedef
-	typedef std::map<std::string, double, std::greater<std::string> >	btc_map;
+	typedef std::map<std::string, double, std::greater<std::string> >	btc_map;//! std::greater<T> or std::less<T>でソートの順序を変えられる <functional>
 	typedef btc_map::const_iterator	itr;
 	typedef std::pair<std::string, double>	btc_pair;
 	typedef bool(BitcoinExchange::*F)(std::string const &line);
