@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/23 11:31:27 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/23 21:45:35 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ private:
 	void	print_con(Con const &con) const;
 	PmergeMe();//hidden
 	PmergeMe(PmergeMe const &rhs);
+	PmergeMe &operator=(PmergeMe const &rhs);
 public:
 	PmergeMe(char const **argv);
 	~PmergeMe();
-	PmergeMe &operator=(PmergeMe const &rhs);
 	void		sort_start(void);
 	double		get_duration(void) const;
 	std::size_t	get_valid_argc(void) const;
@@ -97,30 +97,24 @@ PmergeMe<Con>::~PmergeMe()
 }
 
 template <typename Con>
-PmergeMe<Con>::PmergeMe(PmergeMe const &rhs)
+PmergeMe<Con>::PmergeMe(PmergeMe const &rhs)//hidden
 {
 	(void) rhs;
 	return ;
 }
 
 template <typename Con>
-PmergeMe<Con>	&PmergeMe<Con>::operator=(PmergeMe const &rhs)
+PmergeMe<Con>	&PmergeMe<Con>::operator=(PmergeMe const &rhs)//hidden
 {
 	(void) rhs;
 	return (*this);
 }
 
-static void	assert_valid_number(xString const &num_str, std::size_t num_ui)
+static void	assert_valid_number(xString const &num_str, std::stringstream const &ss)
 {
-	if (num_str.contain_any_of("-"))
-		throw (std::invalid_argument("Error"));
-	else if (num_str.empty())
-		throw (std::invalid_argument("Error"));
+	if (!ss || ss.str().empty())
+		throw(std::invalid_argument("Error"));
 	else if (num_str.contain_not_of("0123456789"))
-		throw (std::invalid_argument("Error"));
-	else if (num_ui == std::numeric_limits<std::size_t>::max())
-		throw (std::invalid_argument("Error"));
-	else if (num_str != "0" && num_ui == 0)
 		throw (std::invalid_argument("Error"));
 }
 
@@ -133,7 +127,7 @@ void	PmergeMe<Con>::gen_argv_seq(char const **argv)
 		std::stringstream num_ss(num_str);
 		std::size_t	num_ui;
 		num_ss >> num_ui;
-		assert_valid_number(num_str, num_ui);
+		assert_valid_number(num_str, num_ss);
 		argv_seq.push_back(num_ui);
 	}
 }
