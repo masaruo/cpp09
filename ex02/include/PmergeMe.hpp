@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
+/*   By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/24 08:44:20 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/24 09:09:48 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ private:
 	Con			argv_seq;
 	Con			jacob_seq;
 	Con			sorted_seq;
-	double		duration;
+	double		sorting_duration;
+	double		data_mgmt_duration;
 	con_size_t	valid_argc;
 	void	gen_argv_seq(char const **argv);
 	void	gen_jacob_seq(con_size_t size);
@@ -85,9 +86,12 @@ PmergeMe<Con>::PmergeMe(){ return ; }// hidden
 template <typename Con>
 PmergeMe<Con>::PmergeMe(char const **argv)
 {
+	std::clock_t start = std::clock();
 	gen_argv_seq(argv);
 	valid_argc = argv_seq.size();
 	gen_jacob_seq(valid_argc + 1);
+	std::clock_t end = std::clock();
+	data_mgmt_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
 
 template <typename Con>
@@ -160,7 +164,7 @@ void	PmergeMe<Con>::gen_jacob_seq(con_size_t size)
 template <typename Con>
 double	PmergeMe<Con>::get_duration(void) const
 {
-	return (duration);
+	return (sorting_duration + data_mgmt_duration);
 }
 
 template <typename Con>
@@ -177,7 +181,7 @@ void	PmergeMe<Con>::sort_start(void)
 	std::clock_t start = std::clock();
 	sorted_seq = merge_insert_sort(NULL, NULL);
 	std::clock_t end = std::clock();
-	duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
+	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
 
 template <typename Con>
