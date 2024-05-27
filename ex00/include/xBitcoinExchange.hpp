@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*   xBitcoinExchange.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/24 08:29:55 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/27 11:39:00 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ private:
 	double	get_px(std::string const &key) const;
 public:
 	BitcoinExchange();
-	// BitcoinExchange(char const *file);
 	~BitcoinExchange();
 	BitcoinExchange(BitcoinExchange const &rhs);
 	BitcoinExchange &operator=(BitcoinExchange const &rhs);

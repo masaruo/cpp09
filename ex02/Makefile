@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+         #
+#    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/24 09:10:43 by mogawa           ###   ########.fr        #
+#    Updated: 2024/05/27 11:40:30 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,16 +20,10 @@ INC			:=	-I../include -I./include
 SRC			=	 \
 				XString.cpp \
 				main.cpp
-SRCDIR		:=	.
+SRCDIR		:=	src
 OBJDIR		:=	obj
 OBJ			:=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 DEP			:=	$(SRC:%.cpp=$(OBJDIR)/%.d)
-
-ifdef WITH_GTEST
-CXXFLAGS	:=	-Wall -Wextra -std=c++17 $(GTEST_INC) -g3 -O0
-LDFLAGS		:=	$(GTEST_LIB) -lpthread -lgtest -lgtest_main -lgmock 
-SRC			=	Fixed.gtest.cpp Fixed.cpp
-endif
 
 ifdef WITH_LEAK
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
@@ -50,10 +44,6 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 $(TARGET):	$(OBJ)
 	$(CXX) $(LDFLAGS) $^ -o $@
-
-# gtest: fclean
-# 	$(MAKE) all WITH_GTEST=1
-# 	./$(TARGET)
 
 leak: fclean
 	$(MAKE) all WITH_LEAK=1

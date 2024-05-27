@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   XString.cpp                                        :+:      :+:    :+:   */
+/*   xString.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:46:16 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/19 21:22:24 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/24 11:36:17 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "XString.hpp"
+#include "xString.hpp"
 
 xString::xString()
 {
@@ -49,7 +49,7 @@ xString &xString::operator=(xString const &rhs)
 	return (*this);
 }
 
-bool	xString::contain_not_of(std::string const &to_search, std::size_t pos) const
+bool	xString::contain_not_of(std::string const &to_search, str_size pos) const
 {
 	if (this->find_first_not_of(to_search, pos) != std::string::npos)
 		return (true);
@@ -57,7 +57,7 @@ bool	xString::contain_not_of(std::string const &to_search, std::size_t pos) cons
 		return (false);
 }
 
-bool	xString::contain_not_of(char const *to_search, std::size_t pos) const
+bool	xString::contain_not_of(char const *to_search, str_size pos) const
 {
 	std::string	const	to_search_str(to_search);
 
@@ -67,7 +67,7 @@ bool	xString::contain_not_of(char const *to_search, std::size_t pos) const
 		return (false);
 }
 
-bool	xString::contain_any_of(std::string const &to_search, std::size_t pos) const
+bool	xString::contain_any_of(std::string const &to_search, str_size pos) const
 {
 	if (this->find_first_of(to_search, pos) != std::string::npos)
 		return (true);
@@ -75,7 +75,7 @@ bool	xString::contain_any_of(std::string const &to_search, std::size_t pos) cons
 		return (false);
 }
 
-bool	xString::contain_any_of(char const *to_search, std::size_t pos) const
+bool	xString::contain_any_of(char const *to_search, str_size pos) const
 {
 	std::string const	to_search_str = to_search;
 	if (this->find_first_of(to_search_str, pos) != std::string::npos)
@@ -122,22 +122,22 @@ bool	xString::end_with(char const to_search) const
 
 char	&xString::front(void)
 {
-	return (std::string::at(1));
+	return (std::string::at(0));
 }
 
 char const	&xString::front(void) const
 {
-	return (std::string::at(1));
+	return (std::string::at(0));
 }
 
 char	&xString::back(void)
 {
-	return (std::string::at(std::string::size()));
+	return (std::string::at(std::string::size() - 1));
 }
 
 char const	&xString::back(void) const
 {
-	return (std::string::at(std::string::size()));
+	return (std::string::at(std::string::size() - 1));
 }
 
 void	xString::pop(void)

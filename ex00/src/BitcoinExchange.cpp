@@ -1,37 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/30 16:47:31 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/27 11:21:21 by mogawa           ###   ########.fr       */
+/*   Created: 2024/05/27 11:49:18 by mogawa            #+#    #+#             */
+/*   Updated: 2024/05/27 11:57:50 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RPN.hpp"
-#include <iostream>
+#include "BitcoinExchange.hpp"
 
-int main(int argc, char **argv)
+BitcoinExchange::BitcoinExchange()
 {
-	if (argc != 2)
+	//todo set up px list
+	return ;
+}
+
+BitcoinExchange::~BitcoinExchange()
+{
+	return ;
+}
+
+BitcoinExchange::BitcoinExchange(BitcoinExchange const &rhs)
+:px_list(rhs.px_list)
+{
+	return ;
+}
+
+BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &rhs)
+{
+	if (this != &rhs)
 	{
-		std::cout << "Error" << std::endl;
-		return (1);
+		px_list.operator=(rhs.px_list);
 	}
-	try
-	{
-		RPN	rpn(argv[1]);
-	}
-	catch(RPN::RPNOverflowException const &e)
-	{
-		std::cout << "Error" << std::endl;
-		std::cout << e.what() << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-	return (0);
 }

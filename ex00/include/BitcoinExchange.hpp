@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/30 16:47:31 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/27 11:21:21 by mogawa           ###   ########.fr       */
+/*   Created: 2024/05/27 11:45:04 by mogawa            #+#    #+#             */
+/*   Updated: 2024/05/27 11:54:17 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RPN.hpp"
-#include <iostream>
+#pragma once
+#include "xString.hpp"
+#include <map>
+#include <utility>
 
-int main(int argc, char **argv)
+class BitcoinExchange
 {
-	if (argc != 2)
-	{
-		std::cout << "Error" << std::endl;
-		return (1);
-	}
-	try
-	{
-		RPN	rpn(argv[1]);
-	}
-	catch(RPN::RPNOverflowException const &e)
-	{
-		std::cout << "Error" << std::endl;
-		std::cout << e.what() << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-	return (0);
-}
+public:
+	typedef std::map<xString, double>	btc_map;
+	typedef btc_map::const_iterator		const_iterator;
+private:
+	btc_map	px_list;
+public:
+	BitcoinExchange();
+	~BitcoinExchange();
+	BitcoinExchange(BitcoinExchange const &rhs);
+	BitcoinExchange &operator=(BitcoinExchange const &rhs);
+};

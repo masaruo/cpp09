@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/17 19:05:35 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/27 11:35:45 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include "xString.hpp"
 
 std::string BitcoinExchange::DIGITS = "0123456789";
 
@@ -33,43 +34,44 @@ bool	BitcoinExchange::parse_data_csv(std::string const &line)
 		return (false);
 }
 
-void	BitcoinExchange::assert_input_date(std::string const &line, std::string const &date)
-{
-	std::istringstream	iss(date);
-	std::string	yyyy, mm, dd;
+// void	BitcoinExchange::assert_input_date(std::string const &line, std::string const &date)
+// {
+// 	std::istringstream	iss(date);
+// 	std::string	yyyy, mm, dd;
 
-	if (std::getline(iss, yyyy, '-') && std::getline(iss, mm, '-') && std::getline(iss, dd))
-	{
-		if (yyyy.find_first_not_of(DIGITS) != std::string::npos 
-			|| mm.find_first_not_of(DIGITS) != std::string::npos
-			|| dd.find_first_not_of(DIGITS) != std::string::npos) // no digits?
-		{
-			throw(BTCBadInputException(line));
-		}
+// 	if (std::getline(iss, yyyy, '-') && std::getline(iss, mm, '-') && std::getline(iss, dd))
+// 	{
+// 		if (yyyy.find_first_not_of(DIGITS) != std::string::npos 
+// 			|| mm.find_first_not_of(DIGITS) != std::string::npos
+// 			|| dd.find_first_not_of(DIGITS) != std::string::npos) // no digits?
+// 		{
+// 			throw(BTCBadInputException(line));
+// 		}
+// 		if (yyyy.find_first_not_of())
 
-		std::stringstream ymd_ss(yyyy + mm + dd);
-		std::size_t date_in_int;
-		ymd_ss >> date_in_int;
-		if (date_in_int < 20090102 || 20220329 < date_in_int) // out of date range?
-			throw (BTCBadInputException(line));
+// 		// std::stringstream ymd_ss(yyyy + mm + dd);
+// 		// std::size_t date_in_int;
+// 		// ymd_ss >> date_in_int;
+// 		// if (date_in_int < 20090102 || 20220329 < date_in_int) // out of date range?
+// 		// 	throw (BTCBadInputException(line));
 
-		std::stringstream	y_ss(yyyy), m_ss(mm), d_ss(dd);
-		std::size_t	y_num, m_num, d_num;
-		y_ss >> y_num;
-		m_ss >> m_num;
-		d_ss >> d_num;
-		if (y_num < 2009 || 2022 < y_num) // year mm dd range
-			throw (BTCBadInputException(line));
-		else if (m_num < 1 || 12 < m_num)
-			throw (BTCBadInputException(line));
-		else if (d_num < 1 || 31 < d_num)
-			throw (BTCBadInputException(line));
-	}
-	else
-	{
-		throw (BTCBadInputException(line));
-	}
-}
+// 		std::stringstream	y_ss(yyyy), m_ss(mm), d_ss(dd);
+// 		std::size_t	y_num, m_num, d_num;
+// 		y_ss >> y_num;
+// 		m_ss >> m_num;
+// 		d_ss >> d_num;
+// 		if (y_num < 2009) // year mm dd range
+// 			throw (BTCBadInputException(line));
+// 		else if (m_num < 1 || 12 < m_num)
+// 			throw (BTCBadInputException(line));
+// 		else if (d_num < 1 || 31 < d_num)
+// 			throw (BTCBadInputException(line));
+// 	}
+// 	else
+// 	{
+// 		throw (BTCBadInputException(line));
+// 	}
+// }
 
 void	BitcoinExchange::assert_input_value(std::string const &line, std::string const &value)
 {
@@ -113,14 +115,15 @@ static void	print(std::string const &date, double unit, double px)
 	oss << " => ";
 	oss << unit;
 	oss << " = ";
-	oss << std::setw(3) << unit * px;
+	oss << std::setw(3) << std::fixed << unit * px;
 	std::cout << oss.str() << std::endl;
 }
 
-bool	BitcoinExchange::input_handler(std::string const &line)
+bool	BitcoinExchange::input_handler(xString const &line)
 {
-	std::string	key, value_str;
-	double		value;
+	xString	key, value_str;
+	double	value;
+
 	std::istringstream	iss(line);
 	if (std::getline(iss, key, '|') && std::getline(iss, value_str))
 	{
@@ -153,7 +156,7 @@ void	BitcoinExchange::for_each_line(char const *file, F func)
 	{
 		throw (std::invalid_argument("Error: could not open file."));
 	}
-	for (std::string buf; std::getline(ifs, buf);)
+	for (xString buf; std::getline(ifs, buf);)
 	{
 		if (buf == "date,exchange_rate" || buf == "date | value")
 			continue ;
@@ -178,12 +181,6 @@ BitcoinExchange::BitcoinExchange()
 	for_each_line("./data.csv", &BitcoinExchange::parse_data_csv);
 	return ;
 }
-
-// BitcoinExchange::BitcoinExchange(char const *file)
-// {
-// 	for_each_line(file, &BitcoinExchange::parse_data_csv);
-// 	return ;
-// }
 
 BitcoinExchange::~BitcoinExchange()
 {

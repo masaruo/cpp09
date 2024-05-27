@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/24 09:21:40 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/27 11:37:18 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	main(int argc, char **argv)
 	try
 	{
 		PmergeMe<std::vector<std::size_t> >vec_sort(const_cast<char const **>(argv));
-		PmergeMe<std::vector<std::size_t> >deque_sort(const_cast<char const **>(argv));
+		PmergeMe<std::deque<std::size_t> >deque_sort(const_cast<char const **>(argv));
 		vec_sort.sort_start();
 		deque_sort.sort_start();
 		std::cout << BLUE;

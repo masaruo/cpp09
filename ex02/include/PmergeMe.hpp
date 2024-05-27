@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/24 09:09:48 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/26 22:58:43 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ template <typename Con>
 class PmergeMe
 {
 public: //typedef
-	typedef typename Con::const_iterator	cit_t;
-	typedef typename Con::iterator			it_t;
-	typedef typename Con::size_type			con_size_t;
-	typedef typename Con::difference_type	diff_t;
+	typedef typename Con::const_iterator	const_iterator;
+	typedef typename Con::iterator			iterator;
+	typedef typename Con::size_type			size_type;
+	typedef typename Con::difference_type	difference_type;
 
 private:
 	Con			argv_seq;
