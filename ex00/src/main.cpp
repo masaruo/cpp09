@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 08:43:33 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/17 19:04:07 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/27 12:23:01 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	main(int argc, char **argv)
 			return (1);
 		}
 		BitcoinExchange	btc;
-		btc.calculate(const_cast<char const**>(argv));
+		// btc.calculate(const_cast<char const**>(argv));
+		std::cout << std::endl;
 	}
 	catch(const std::exception& e)
 	{
