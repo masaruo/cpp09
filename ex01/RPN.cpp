@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/19 14:59:14 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/05/28 17:48:36 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <limits>
-#include "SafeSignedIntMath.hpp"
+#include "SafeMath.hpp"
 
 int const SPACE = ' ';
 
@@ -32,13 +32,13 @@ int	RPN::get_calc_num(int first, int last, int opter)
 	switch (opter)
 	{
 		case ('*'):
-			return (SafeSignedIntMath<int>::mul(first, last));
+			return (SafeMath<int>::mul(first, last));
 		case ('+'):
-			return (SafeSignedIntMath<int>::add(first, last));
+			return (SafeMath<int>::add(first, last));
 		case ('-'):
-			return (SafeSignedIntMath<int>::sub(first, last));
+			return (SafeMath<int>::sub(first, last));
 		case ('/'):
-			return (SafeSignedIntMath<int>::div(first, last));
+			return (SafeMath<int>::div(first, last));
 		default:
 			return (0);
 	}
