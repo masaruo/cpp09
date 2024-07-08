@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/17 08:48:15 by mogawa           ###   ########.fr        #
+#    Updated: 2024/07/08 10:00:28 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/inclu
 GTEST_LIB	:=	-L../googletest/build/lib
 INC			:=	-I../include
 SRC			=	 \
+				string.cpp \
 				BitcoinExchange.cpp \
 				main.cpp
 SRCDIR		:=	.
@@ -61,7 +62,7 @@ leak: fclean
 
 debug: fclean
 	$(MAKE) all WITH_ASAN=1
-	./$(TARGET) input.txt
+	./$(TARGET) input2.txt
 
 clean:
 	$(RM) -r $(OBJDIR)
