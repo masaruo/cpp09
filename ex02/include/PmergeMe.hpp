@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mogawa <mogawa@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/24 09:09:48 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/10 16:55:13 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "XString.hpp"
+#include "xString.hpp"
 #include <iostream>
 #include <sstream>
-// #include <utility>
 #include <ctime>
+#include <iterator>
+// #include <utility>
 // #include <algorithm>
 // #include <vector>
 // #include <deque>
 // #include <limits>
-// #include <iterator>
 // #include <exception>
 // #include <stdexcept>
 
@@ -28,10 +28,10 @@ template <typename Con>
 class PmergeMe
 {
 public: //typedef
-	typedef typename Con::const_iterator	cit_t;
-	typedef typename Con::iterator			it_t;
-	typedef typename Con::size_type			con_size_t;
-	typedef typename Con::difference_type	diff_t;
+	typedef typename Con::const_iterator	const_iterator;
+	typedef typename Con::iterator			iterator;
+	typedef typename Con::size_type			size_type;
+	typedef typename Con::difference_type	difference_type;
 
 private:
 	Con			argv_seq;
@@ -39,9 +39,9 @@ private:
 	Con			sorted_seq;
 	double		sorting_duration;
 	double		data_mgmt_duration;
-	con_size_t	valid_argc;
+	size_type	valid_argc;
 	void	gen_argv_seq(char const **argv);
-	void	gen_jacob_seq(con_size_t size);
+	void	gen_jacob_seq(size_type size);
 	Con		merge_insert_sort(Con *prev_main, Con *prev_pmend);
 	void	print_con(Con const &con) const;
 	PmergeMe();//hidden
@@ -54,6 +54,10 @@ public:
 	double		get_duration(void) const;
 	std::size_t	get_valid_argc(void) const;
 	void		print(void) const;
+	#ifdef DEBUG
+	void	debug(Con main, Con pmend, Con prevmain, Con prevpmend, std::string msg);
+	void	debug_print(Con c, std::string);
+	#endif
 };
 
 static void put(std::size_t const &n)
@@ -64,8 +68,8 @@ static void put(std::size_t const &n)
 template <typename Con>
 void	PmergeMe<Con>::print_con(Con const &con) const
 {
-	cit_t	beg = con.begin();
-	cit_t	end = con.end();
+	const_iterator	beg = con.begin();
+	const_iterator	end = con.end();
 
 	std::for_each(beg, end, &put);
 }
@@ -137,18 +141,18 @@ void	PmergeMe<Con>::gen_argv_seq(char const **argv)
 }
 
 template <typename Con>
-void	PmergeMe<Con>::gen_jacob_seq(con_size_t size)
+void	PmergeMe<Con>::gen_jacob_seq(size_type size)
 {
-	con_size_t	prev = 1;
-	con_size_t	before_prev = 0;
-	con_size_t	jacob = 0;
+	size_type	prev = 1;
+	size_type	before_prev = 0;
+	size_type	jacob = 0;
 
 	jacob_seq.push_back(0);
 	while (true)
 	{
 		jacob = prev + (2 * before_prev);
 		jacob_seq.push_back(jacob);
-		for (con_size_t i = jacob - 1; i > prev; i--)
+		for (size_type i = jacob - 1; i > prev; i--)
 		{
 			jacob_seq.push_back(i);
 		}
@@ -184,6 +188,33 @@ void	PmergeMe<Con>::sort_start(void)
 	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
 
+#ifdef DEBUG
+#include <sstream>
+template <typename Con>
+void	PmergeMe<Con>::debug_print(Con c, std::string msg)
+{
+	typename Con::const_iterator	iter = c.begin();
+	std::cout << "[" << msg << "]";
+	while (iter != c.end())
+	{
+		std::cout << "" << *iter << " ";
+		iter++;
+	}
+	std::cout << std::endl;
+}
+
+template <typename Con>
+void	PmergeMe<Con>::debug(Con main, Con pmend, Con prevmain, Con prevpmend, std::string msg)
+{
+	std::cout << msg << std::endl;
+	debug_print(main, "main");
+	debug_print(pmend, "pmend");
+	debug_print(prevmain, "prevmain");
+	debug_print(prevpmend, "prevpmend");
+	std::cout << std::endl;
+}
+#endif
+
 template <typename Con>
 Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 {
@@ -193,13 +224,12 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 	{
 		main = argv_seq;
 	}
-
-	//!Ascend merge part
+	//スタック積み上げ時
 	else
 	{
-		cit_t		crnt = prev_main->begin();
-		cit_t		next = prev_main->begin() + 1;
-		cit_t		end = prev_main->end();
+		const_iterator		crnt = prev_main->begin();
+		const_iterator		next = prev_main->begin() + 1;
+		const_iterator		end = prev_main->end();
 
 		while (crnt != end && next != end)
 		{
@@ -211,51 +241,49 @@ Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
 			pmend.push_back(*crnt);
 	}
 
-	//! Recursion
+	//再起キックイン
 	if (main.size() > 1)
 	{
 		merge_insert_sort(&main, &pmend);
 	}
 
-	//!Decend insert part
+	//スタック減少時
 	//jacobの順番に沿ってpmendの数字をmainに戻す
-	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
-	{
-		cit_t	pmend_it = pmend.begin();
-		if (*jacob_it >= pmend.size())
-			continue ;
-		std::advance(pmend_it, *jacob_it);
-		cit_t	pos = std::lower_bound(main.begin(), main.end(), *pmend_it);
-		main.insert(pos, *pmend_it);
-	}
-	if (prev_pmend == NULL)
-	{
+	if (prev_main == NULL || prev_pmend == NULL)
 		return (main);
-	}
-	//* 1: 新メインをループ。それぞれの要素がprev_mainのどこのINDEXかを見つける
-	//* 2: 当該INDEXのprev_pmendの数字をsorted_pmendにpush back
-	Con	sorted_pmend;
-	std::size_t	cnt = 0;
-	for (cit_t main_it = main.begin(); main_it != main.end(); main_it++)
+	#ifdef DEBUG
+	debug(main, pmend, *prev_main, *prev_pmend, "before loop: ");
+	#endif
+	pmend.insert(pmend.begin(), main.begin(), main.end());
+	for (const_iterator jacob_idx = jacob_seq.begin(); jacob_idx != jacob_seq.end(); jacob_idx++)
 	{
-		cit_t	pos = std::find(prev_main->begin(), prev_main->end(), *main_it);
-		if (pos != prev_main->end())
-		{
-			cit_t prev_begin = prev_main->begin();
-			diff_t	idx = std::distance(prev_begin, pos);
-			if (prev_pmend->empty())
-				break ;
-			sorted_pmend.push_back(prev_pmend->at(static_cast<std::size_t>(idx)));
-			cnt++;
-		}
-	}
-	while (cnt < prev_pmend->size())
-	{
-		sorted_pmend.push_back(prev_pmend->at(cnt));
-		cnt++;
-	}
-	*prev_main = main;
-	*prev_pmend = sorted_pmend;
+		if (*jacob_idx >= pmend.size())
+			continue ;
+		//jacobのindexに対応したpmendの数字を確保
+		std::size_t	value_to_insert_into_main = pmend.at(*jacob_idx);
 
-	return (main);
+		//@prev_main: 数字のindexを確保
+		const_iterator	pos_in_prevmain = std::find(prev_main->begin(), prev_main->end(), value_to_insert_into_main);
+		difference_type	idx_of_shift_tgt = pos_in_prevmain - prev_main->begin();
+
+		//上記INDEXのprevpmend数字を確保
+		// std::size_t	prevmain_insert_val = prev_main->at(idx_of_shift_tgt);//?should be equal to value_to_insert
+		std::size_t	prevpmend_insert_val = prev_pmend->at(idx_of_shift_tgt);//prev_pmendの対応する数値
+
+		//insert_idxの数字を削除
+		prev_main->erase(prev_main->begin() + idx_of_shift_tgt);
+		prev_pmend->erase(prev_pmend->begin() + idx_of_shift_tgt);
+		//mainにおいて、ターゲットの数値をインサートする場所を見つける
+		iterator	insert_pos_iter = std::lower_bound(prev_main->begin(), prev_main->end(), value_to_insert_into_main);
+		std::size_t		insert_pos_idx = std::distance(prev_main->begin(), insert_pos_iter);
+		
+		prev_main->insert(prev_main->begin() + insert_pos_idx, value_to_insert_into_main);
+		prev_pmend->insert(prev_pmend->begin() + insert_pos_idx, prevpmend_insert_val);
+	}
+		// main = *prev_main;
+		// pmend = *prev_pmend;
+		#ifdef DEBUG
+		debug(main, pmend, *prev_main, *prev_pmend, "after loop: ");
+		#endif
+		return (main);
 }

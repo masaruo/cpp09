@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   XString.cpp                                        :+:      :+:    :+:   */
+/*   xString.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:46:16 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/19 21:22:24 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/08 10:18:06 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "XString.hpp"
+#include "xString.hpp"
 
 xString::xString()
 {
@@ -49,36 +49,26 @@ xString &xString::operator=(xString const &rhs)
 	return (*this);
 }
 
-bool	xString::contain_not_of(std::string const &to_search, std::size_t pos) const
+bool	xString::contain_not_of(std::string const &to_search, size_type start, size_type end) const
 {
-	if (this->find_first_not_of(to_search, pos) != std::string::npos)
+	if (end == std::string::npos)
+		end = this->size();
+
+	size_type const	pos = find_first_not_of(to_search, start);
+
+	if (pos != std::string::npos && pos <= end)
 		return (true);
 	else
 		return (false);
 }
 
-bool	xString::contain_not_of(char const *to_search, std::size_t pos) const
+bool	xString::contain_any_of(std::string const &to_search, size_type start, size_type end) const
 {
-	std::string	const	to_search_str(to_search);
+	if (end == std::string::npos)
+		end = this->size();
+	size_type const	pos = find_first_of(to_search, start);
 
-	if (this->find_first_not_of(to_search_str, pos) != std::string::npos)
-		return (true);
-	else
-		return (false);
-}
-
-bool	xString::contain_any_of(std::string const &to_search, std::size_t pos) const
-{
-	if (this->find_first_of(to_search, pos) != std::string::npos)
-		return (true);
-	else
-		return (false);
-}
-
-bool	xString::contain_any_of(char const *to_search, std::size_t pos) const
-{
-	std::string const	to_search_str = to_search;
-	if (this->find_first_of(to_search_str, pos) != std::string::npos)
+	if (pos != std::string::npos && pos <= end)
 		return (true);
 	else
 		return (false);
@@ -86,7 +76,7 @@ bool	xString::contain_any_of(char const *to_search, std::size_t pos) const
 
 bool	xString::start_with(std::string const &to_search) const
 {
-	str_size pos = find_first_of(to_search);
+	size_type pos = find_first_of(to_search);
 	if (pos == 0)
 		return (true);
 	else
@@ -95,7 +85,7 @@ bool	xString::start_with(std::string const &to_search) const
 
 bool	xString::start_with(char const to_search) const
 {
-	str_size pos = find_first_of(to_search);
+	size_type pos = find_first_of(to_search);
 	if (pos == 0)
 		return (true);
 	else
@@ -104,7 +94,7 @@ bool	xString::start_with(char const to_search) const
 
 bool	xString::end_with(std::string const &to_search) const
 {
-	str_size pos = find_last_of(to_search);
+	size_type pos = find_last_of(to_search);
 	if (pos + 1 == this->size())
 		return (true);
 	else
@@ -113,7 +103,7 @@ bool	xString::end_with(std::string const &to_search) const
 
 bool	xString::end_with(char const to_search) const
 {
-	str_size pos = find_last_of(to_search);
+	size_type pos = find_last_of(to_search);
 	if (pos + 1 == this->size())
 		return (true);
 	else
@@ -122,22 +112,22 @@ bool	xString::end_with(char const to_search) const
 
 char	&xString::front(void)
 {
-	return (std::string::at(1));
+	return (std::string::at(0));
 }
 
 char const	&xString::front(void) const
 {
-	return (std::string::at(1));
+	return (std::string::at(0));
 }
 
 char	&xString::back(void)
 {
-	return (std::string::at(std::string::size()));
+	return (std::string::at(std::string::size() - 1));
 }
 
 char const	&xString::back(void) const
 {
-	return (std::string::at(std::string::size()));
+	return (std::string::at(std::string::size() - 1));
 }
 
 void	xString::pop(void)
@@ -168,11 +158,11 @@ void	xString::trim(char const &target)
 		this->pop_back();
 }
 
-xString::vec_str	xString::split(std::string const &delims) const
+xString::xstring_vector	xString::split(std::string const &delims) const
 {
-	vec_str		split_v;
-	str_size	cp_end = 0;
-	str_size	cp_begin = 0;
+	xstring_vector		split_v;
+	size_type	cp_end = 0;
+	size_type	cp_begin = 0;
 
 	while (true)
 	{
@@ -193,9 +183,9 @@ xString::vec_str	xString::split(std::string const &delims) const
 	return (split_v);
 }
 
-std::ostream &operator<<(std::ostream &os, xString::vec_str const &rhs)
+std::ostream &operator<<(std::ostream &os, xString::xstring_vector const &rhs)
 {
-	xString::vec_str::const_iterator it = rhs.begin();
+	xString::xstring_vector::const_iterator it = rhs.begin();
 
 	while (it != rhs.end())
 	{
