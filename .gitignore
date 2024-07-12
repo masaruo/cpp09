@@ -1,6 +1,7 @@
 *
 !data.csv
 !*/
+!input.txt
 !*.cpp
 !*.hpp
 !Makefile
