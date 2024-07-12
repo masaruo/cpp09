@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xBitcoinExchange.cpp                               :+:      :+:    :+:   */
+/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:56:07 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/08 10:02:07 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include "xString.hpp"
 
 std::string BitcoinExchange::DIGITS = "0123456789";
 
@@ -51,7 +50,7 @@ static void	print(std::string const &date, double unit, double px)
 	oss << unit;
 	oss << " = ";
 	oss << unit * px;
-	// oss << std::fixed << std::setprecision(2) << std::fixed << unit * px;
+	// oss << std::fixed << std::setprecision(2) << unit * px;
 	std::cout << oss.str() << std::endl;
 }
 
@@ -113,7 +112,8 @@ void	BitcoinExchange::assert_alnum_sequence(std::string const &readline)
 
 bool	BitcoinExchange::input_handler(std::string const &line)
 {
-	std::string	key, value_str;
+	assert_alnum_sequence(line);
+	ft::string	date, value_str;
 	double		value;
 	std::istringstream	iss(line);
 	if (std::getline(iss, date, '|') && std::getline(iss, value_str))
@@ -150,7 +150,7 @@ void	BitcoinExchange::for_each_line(char const *file, F func)
 	{
 		throw (std::invalid_argument("Error: could not open file."));
 	}
-	for (xString buf; std::getline(ifs, buf);)
+	for (std::string buf; std::getline(ifs, buf);)
 	{
 		if (buf == "date,exchange_rate" || buf == "date | value")
 			continue ;

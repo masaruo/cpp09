@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 15:28:53 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:57:00 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/08 10:16:36 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	RPN::calculate(std::string const &num)
 		{
 			if (stack_.size() < 2)
 			{
-				throw (std::invalid_argument("Error: stack less than 2 elements"));
+				throw (std::invalid_argument("Error"));
 			}
 			int const last_ = this->stack_.top();
 			this->stack_.pop();
@@ -79,12 +79,13 @@ void	RPN::calculate(std::string const &num)
 		}
 		else
 		{
-			throw (std::invalid_argument("Error"));
+			std::cout << "Error" << std::endl;
+			std::exit(1);
 		}
 	}
 	if (this->stack_.size() != 1)
 	{
-		throw (std::invalid_argument("Error: ending while the stack is not empty"));
+		throw (std::invalid_argument("Error"));
 	}
 	std::cout << stack_.top() << std::endl;
 }

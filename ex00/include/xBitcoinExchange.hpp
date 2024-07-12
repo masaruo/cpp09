@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:51:08 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 11:06:40 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ private:
 	void	for_each_line(char const *file, F func);
 	bool	parse_data_csv(std::string const &line);
 	bool	input_handler(std::string const &line);
+	void	assert_alnum_sequence(std::string const &readline);
+	void	assert_input_date(std::string const &readline, std::string const in_date);
+	void	assert_input_value(std::string const in_value);
 	void	assert_alnum_sequence(std::string const &readline);
 	void	assert_input_date(std::string const &readline, std::string const in_date);
 	void	assert_input_value(std::string const in_value);

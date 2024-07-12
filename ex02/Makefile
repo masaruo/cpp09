@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/07/12 10:57:26 by mogawa           ###   ########.fr        #
+#    Updated: 2024/07/10 13:04:19 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,16 @@ INC			:=	-I../include -I./include
 SRC			=	 \
 				xString.cpp \
 				main.cpp
-SRCDIR		:=	src
+SRCDIR		:=	.
 OBJDIR		:=	obj
 OBJ			:=	$(SRC:%.cpp=$(OBJDIR)/%.o)
 DEP			:=	$(SRC:%.cpp=$(OBJDIR)/%.d)
+
+# ifdef WITH_GTEST
+# CXXFLAGS	:=	-Wall -Wextra -std=c++17 $(GTEST_INC) -g3 -O0
+# LDFLAGS		:=	$(GTEST_LIB) -lpthread -lgtest -lgtest_main -lgmock 
+# SRC			=	Fixed.gtest.cpp Fixed.cpp
+# endif
 
 ifdef WITH_LEAK
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
@@ -44,6 +50,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 $(TARGET):	$(OBJ)
 	$(CXX) $(LDFLAGS) $^ -o $@
+
+# gtest: fclean
+# 	$(MAKE) all WITH_GTEST=1
+# 	./$(TARGET)
 
 leak: fclean
 	$(MAKE) all WITH_LEAK=1
