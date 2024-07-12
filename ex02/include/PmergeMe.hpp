@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:34:02 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 11:41:04 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,9 +320,13 @@ void	PmergeMe<Con>::sort_vector(nested_vec &seq)
 	}
 
 	// insert
-	for (const_nested_vec_iter small_iter = small.begin(); small_iter != small.end(); small_iter++)
+	for (const_iterator jacob = jacob_seq.begin(); jacob != jacob_seq.end(); jacob++)
 	{
-		nested_vec	tmp;
+		if (*jacob >= small.size())
+			continue ;
+		const_nested_vec_iter	small_iter = small.begin();
+		std::advance(small_iter, *jacob);
+		nested_vec tmp;
 		for (const_nested_vec_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
 		{
 			if (small_iter->front() == 0)
@@ -440,9 +444,13 @@ void	PmergeMe<Con>::sort_deque(nested_dq &seq)
 	}
 
 	// insert
-	for (const_nested_dq_iter small_iter = small.begin(); small_iter != small.end(); small_iter++)
+	for (const_iterator jacob = jacob_seq.begin(); jacob != jacob_seq.end(); jacob++)
 	{
-		nested_dq	tmp;
+		if (*jacob >= small.size())
+			continue ;
+		const_nested_dq_iter	small_iter = small.begin();
+		std::advance(small_iter, *jacob);
+		nested_dq tmp;
 		for (const_nested_dq_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
 		{
 			if (small_iter->front() == 0)
