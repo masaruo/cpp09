@@ -6,23 +6,18 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/26 22:58:43 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 10:45:08 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "XString.hpp"
+#include "xString.hpp"
+#include <vector>
+#include <deque>
 #include <iostream>
 #include <sstream>
-// #include <utility>
 #include <ctime>
-// #include <algorithm>
-// #include <vector>
-// #include <deque>
-// #include <limits>
-// #include <iterator>
-// #include <exception>
-// #include <stdexcept>
+#include <iterator>
 
 template <typename Con>
 class PmergeMe
@@ -32,17 +27,25 @@ public: //typedef
 	typedef typename Con::iterator			iterator;
 	typedef typename Con::size_type			size_type;
 	typedef typename Con::difference_type	difference_type;
-
+	//for nested_vec
+	typedef std::vector<std::vector <std::size_t> > 	nested_vec;
+	typedef nested_vec::const_iterator					const_nested_vec_iter;
+	typedef nested_vec::size_type						nested_vec_size_type;
+	//for nested_deque
+	typedef std::deque<std::deque <std::size_t> >		nested_dq;
+	typedef nested_dq::const_iterator					const_nested_dq_iter;
+	typedef nested_dq::size_type						nested_dq_size_type;
 private:
 	Con			argv_seq;
 	Con			jacob_seq;
 	Con			sorted_seq;
 	double		sorting_duration;
 	double		data_mgmt_duration;
-	con_size_t	valid_argc;
+	size_type	valid_argc;
 	void	gen_argv_seq(char const **argv);
-	void	gen_jacob_seq(con_size_t size);
-	Con		merge_insert_sort(Con *prev_main, Con *prev_pmend);
+	void	gen_jacob_seq(size_type size);
+	void	sort_vector(nested_vec &);
+	void	sort_deque(nested_dq &);
 	void	print_con(Con const &con) const;
 	PmergeMe();//hidden
 	PmergeMe(PmergeMe const &rhs);
@@ -50,7 +53,8 @@ private:
 public:
 	PmergeMe(char const **argv);
 	~PmergeMe();
-	void		sort_start(void);
+	void		sort_start_vector(void);
+	void		sort_start_deque(void);
 	double		get_duration(void) const;
 	std::size_t	get_valid_argc(void) const;
 	void		print(void) const;
@@ -64,8 +68,8 @@ static void put(std::size_t const &n)
 template <typename Con>
 void	PmergeMe<Con>::print_con(Con const &con) const
 {
-	cit_t	beg = con.begin();
-	cit_t	end = con.end();
+	const_iterator	beg = con.begin();
+	const_iterator	end = con.end();
 
 	std::for_each(beg, end, &put);
 }
@@ -114,11 +118,13 @@ PmergeMe<Con>	&PmergeMe<Con>::operator=(PmergeMe const &rhs)//hidden
 	return (*this);
 }
 
-static void	assert_valid_number(xString const &num_str, std::stringstream const &ss)
+static void	assert_valid_number(xString const &num_str, std::stringstream const &ss, std::size_t num_ui)
 {
 	if (!ss || ss.str().empty())
 		throw(std::invalid_argument("Error"));
 	else if (num_str.contain_not_of("0123456789"))
+		throw (std::invalid_argument("Error"));
+	else if (num_ui == 0)
 		throw (std::invalid_argument("Error"));
 }
 
@@ -131,24 +137,24 @@ void	PmergeMe<Con>::gen_argv_seq(char const **argv)
 		std::stringstream num_ss(num_str);
 		std::size_t	num_ui;
 		num_ss >> num_ui;
-		assert_valid_number(num_str, num_ss);
+		assert_valid_number(num_str, num_ss, num_ui);
 		argv_seq.push_back(num_ui);
 	}
 }
 
 template <typename Con>
-void	PmergeMe<Con>::gen_jacob_seq(con_size_t size)
+void	PmergeMe<Con>::gen_jacob_seq(size_type size)
 {
-	con_size_t	prev = 1;
-	con_size_t	before_prev = 0;
-	con_size_t	jacob = 0;
+	size_type	prev = 1;
+	size_type	before_prev = 0;
+	size_type	jacob = 0;
 
 	jacob_seq.push_back(0);
 	while (true)
 	{
 		jacob = prev + (2 * before_prev);
 		jacob_seq.push_back(jacob);
-		for (con_size_t i = jacob - 1; i > prev; i--)
+		for (size_type i = jacob - 1; i > prev; i--)
 		{
 			jacob_seq.push_back(i);
 		}
@@ -176,86 +182,285 @@ std::size_t	PmergeMe<Con>::get_valid_argc(void) const
 #include <sys/time.h>
 
 template <typename Con>
-void	PmergeMe<Con>::sort_start(void)
+void	PmergeMe<Con>::sort_start_vector(void)
 {
+	nested_vec		nested_vector;
+	const_iterator	argv_iter = argv_seq.begin();
 	std::clock_t start = std::clock();
-	sorted_seq = merge_insert_sort(NULL, NULL);
+	while (argv_iter != argv_seq.end())
+	{
+		Con tmp;
+		tmp.push_back(*argv_iter);
+		nested_vector.push_back(tmp);
+		argv_iter++;
+	}
+	sort_vector(nested_vector);
+	for (const_nested_vec_iter it = nested_vector.begin(); it != nested_vector.end(); it++)
+	{
+		sorted_seq.push_back(it->front());
+	}
 	std::clock_t end = std::clock();
 	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
 
 template <typename Con>
-Con	PmergeMe<Con>::merge_insert_sort(Con *prev_main, Con *prev_pmend)
+void	PmergeMe<Con>::sort_start_deque(void)
 {
-	Con			main, pmend;
-
-	if (prev_main == NULL)
+	nested_dq		nested_deque;
+	const_iterator	argv_iter = argv_seq.begin();
+	std::clock_t start = std::clock();
+	while (argv_iter != argv_seq.end())
 	{
-		main = argv_seq;
+		Con tmp;
+		tmp.push_back(*argv_iter);
+		nested_deque.push_back(tmp);
+		argv_iter++;
 	}
-
-	//!Ascend merge part
-	else
+	sort_deque(nested_deque);
+	for (const_nested_dq_iter it = nested_deque.begin(); it != nested_deque.end(); it++)
 	{
-		cit_t		crnt = prev_main->begin();
-		cit_t		next = prev_main->begin() + 1;
-		cit_t		end = prev_main->end();
+		sorted_seq.push_back(it->front());
+	}
+	std::clock_t end = std::clock();
+	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
+}
 
-		while (crnt != end && next != end)
+template <typename Con>
+void	PmergeMe<Con>::sort_vector(nested_vec &seq)
+{
+	//stack building
+	if (seq.size() < 2)
+		return ;
+
+	nested_vec					tmp_nested;
+	Con							tmp_vec;
+	const_nested_vec_iter		crnt = seq.begin();
+	const_nested_vec_iter		next = crnt + 1;
+	const_nested_vec_iter		end = seq.end();
+	while (true)
+	{
+		if (crnt->front() == 0 || next->front() == 0)
 		{
-			main.push_back(std::max(*crnt, *next));
-			pmend.push_back(std::min(*crnt, *next));
-			crnt += 2, next += 2;
+			Con	zeropad1(crnt->size(), 0);
+			zeropad1.insert(zeropad1.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeropad1);
+			Con	zeropad2(crnt->size(), 0);
+			zeropad2.insert(zeropad2.end(), next->begin(), next->end());
+			tmp_nested.push_back(zeropad2);
 		}
-		if (crnt != end)
-			pmend.push_back(*crnt);
-	}
-
-	//! Recursion
-	if (main.size() > 1)
-	{
-		merge_insert_sort(&main, &pmend);
-	}
-
-	//!Decend insert part
-	//jacobの順番に沿ってpmendの数字をmainに戻す
-	for (cit_t jacob_it = jacob_seq.begin(); jacob_it != jacob_seq.end(); jacob_it++)
-	{
-		cit_t	pmend_it = pmend.begin();
-		if (*jacob_it >= pmend.size())
-			continue ;
-		std::advance(pmend_it, *jacob_it);
-		cit_t	pos = std::lower_bound(main.begin(), main.end(), *pmend_it);
-		main.insert(pos, *pmend_it);
-	}
-	if (prev_pmend == NULL)
-	{
-		return (main);
-	}
-	//* 1: 新メインをループ。それぞれの要素がprev_mainのどこのINDEXかを見つける
-	//* 2: 当該INDEXのprev_pmendの数字をsorted_pmendにpush back
-	Con	sorted_pmend;
-	std::size_t	cnt = 0;
-	for (cit_t main_it = main.begin(); main_it != main.end(); main_it++)
-	{
-		cit_t	pos = std::find(prev_main->begin(), prev_main->end(), *main_it);
-		if (pos != prev_main->end())
+		else if (*crnt >= *next)
 		{
-			cit_t prev_begin = prev_main->begin();
-			diff_t	idx = std::distance(prev_begin, pos);
-			if (prev_pmend->empty())
+			tmp_vec = *crnt;
+			tmp_vec.insert(tmp_vec.end(), next->begin(), next->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		else
+		{
+			tmp_vec = *next;
+			tmp_vec.insert(tmp_vec.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		if (crnt + 2 == end)
+		{
+			break ;
+		}
+		else if (next + 2 == end)
+		{
+			crnt += 2;
+			Con	zeros(crnt->size(), 0);
+			zeros.insert(zeros.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeros);
+			break ;
+		}
+		crnt += 2;
+		next += 2;
+	}
+	seq = tmp_nested;
+
+	// check size of nested container (1 container ex 0 then finish stack build up)
+	nested_vec_size_type	size = 0;
+	for (const_nested_vec_iter i = seq.begin(); i != seq.end(); i++)
+	{
+		if (i->front() != 0)
+			size++;
+	}
+
+	//!resurse
+	if (size != 1)
+	{
+		sort_vector(seq);
+	}
+
+	//!stack unwinding
+	if (seq.front().size() == 1)
+		return ;
+
+	// ベクターを中間地点にて大きい数字ベクターと小さい数字ベクターに分割(要素が２よりも大きいとき)
+	nested_vec	large, small;
+	for (const_nested_vec_iter v = seq.begin(); v != seq.end(); v++)
+	{
+		Con	front, back;
+		const_iterator	mid = v->begin();
+		if (seq.front().size() != 2)
+		{
+			std::advance(mid, v->size() / 2);
+		}
+		else
+		{
+			std::advance(mid, 1);
+		}
+
+		front.insert(front.end(), v->begin(), mid);
+		back.insert(back.end(), mid, v->end());
+		if (front.front() != 0)
+		{
+			large.push_back(front);
+		}
+		small.push_back(back);
+	}
+
+	// insert
+	for (const_nested_vec_iter small_iter = small.begin(); small_iter != small.end(); small_iter++)
+	{
+		nested_vec	tmp;
+		for (const_nested_vec_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
+		{
+			if (small_iter->front() == 0)
+			{
+				large.push_back(*small_iter);
 				break ;
-			sorted_pmend.push_back(prev_pmend->at(static_cast<std::size_t>(idx)));
-			cnt++;
+			}
+			else if (*large_iter > *small_iter)
+			{
+				large.insert(large_iter, *small_iter);
+				break ;
+			}
+			else if (large_iter + 1 == large.end())
+			{
+				large.push_back(*small_iter);
+				break ;
+			}
 		}
 	}
-	while (cnt < prev_pmend->size())
-	{
-		sorted_pmend.push_back(prev_pmend->at(cnt));
-		cnt++;
-	}
-	*prev_main = main;
-	*prev_pmend = sorted_pmend;
+	seq = large;
+}
 
-	return (main);
+template <typename Con>
+void	PmergeMe<Con>::sort_deque(nested_dq &seq)
+{
+	//stack building
+	if (seq.size() < 2)
+		return ;
+
+	nested_dq					tmp_nested;
+	Con							tmp_vec;
+	const_nested_dq_iter		crnt = seq.begin();
+	const_nested_dq_iter		next = crnt + 1;
+	const_nested_dq_iter		end = seq.end();
+	while (true)
+	{
+		if (crnt->front() == 0 || next->front() == 0)
+		{
+			Con	zeropad1(crnt->size(), 0);
+			zeropad1.insert(zeropad1.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeropad1);
+			Con	zeropad2(crnt->size(), 0);
+			zeropad2.insert(zeropad2.end(), next->begin(), next->end());
+			tmp_nested.push_back(zeropad2);
+		}
+		else if (*crnt >= *next)
+		{
+			tmp_vec = *crnt;
+			tmp_vec.insert(tmp_vec.end(), next->begin(), next->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		else
+		{
+			tmp_vec = *next;
+			tmp_vec.insert(tmp_vec.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		if (crnt + 2 == end)
+		{
+			break ;
+		}
+		else if (next + 2 == end)
+		{
+			crnt += 2;
+			Con	zeros(crnt->size(), 0);
+			zeros.insert(zeros.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeros);
+			break ;
+		}
+		crnt += 2;
+		next += 2;
+	}
+	seq = tmp_nested;
+
+	// check size of nested container (1 container ex 0 then finish stack build up)
+	nested_dq_size_type	size = 0;
+	for (const_nested_dq_iter i = seq.begin(); i != seq.end(); i++)
+	{
+		if (i->front() != 0)
+			size++;
+	}
+
+	//!resurse
+	if (size != 1)
+	{
+		sort_deque(seq);
+	}
+
+	//!stack unwinding
+	if (seq.front().size() == 1)
+		return ;
+
+	// ベクターを中間地点にて大きい数字ベクターと小さい数字ベクターに分割(要素が２よりも大きいとき)
+	nested_dq	large, small;
+	for (const_nested_dq_iter v = seq.begin(); v != seq.end(); v++)
+	{
+		Con	front, back;
+		const_iterator	mid = v->begin();
+		if (seq.front().size() != 2)
+		{
+			std::advance(mid, v->size() / 2);
+		}
+		else
+		{
+			std::advance(mid, 1);
+		}
+
+		front.insert(front.end(), v->begin(), mid);
+		back.insert(back.end(), mid, v->end());
+		if (front.front() != 0)
+		{
+			large.push_back(front);
+		}
+		small.push_back(back);
+	}
+
+	// insert
+	for (const_nested_dq_iter small_iter = small.begin(); small_iter != small.end(); small_iter++)
+	{
+		nested_dq	tmp;
+		for (const_nested_dq_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
+		{
+			if (small_iter->front() == 0)
+			{
+				large.push_back(*small_iter);
+				break ;
+			}
+			else if (*large_iter > *small_iter)
+			{
+				large.insert(large_iter, *small_iter);
+				break ;
+			}
+			else if (large_iter + 1 == large.end())
+			{
+				large.push_back(*small_iter);
+				break ;
+			}
+		}
+	}
+	seq = large;
 }

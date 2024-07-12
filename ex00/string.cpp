@@ -1,46 +1,54 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   xString.cpp                                        :+:      :+:    :+:   */
+/*   ft::string.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 15:46:16 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:58:40 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/05 18:25:54 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "xString.hpp"
+#include "string.hpp"
 
-xString::xString()
+const std::string	ft::string::NUMBER = "0123456789";
+const std::string	ft::string::LOWER = "abcdefghijklmnopqrstuvwxyz";
+const std::string	ft::string::UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const std::string	ft::string::ALPHA = ft::string::LOWER + ft::string::UPPER;
+const std::string	ft::string::ALNUM = ft::string::NUMBER + ft::string::ALPHA;
+
+ft::string::string()
+:std::string()
 {
 	return ;
 }
 
-xString::xString(std::string const &inStr)
-:std::string(inStr)
+
+ft::string::string(std::string const &initialStr)
+:std::string(initialStr)
 {
 	return ;
 }
 
-xString::xString(char const *inStr)
-:std::string(inStr)
+ft::string::string(char const *initialStr)
+:std::string(initialStr)
 {
 	return ;
 }
 
-xString::~xString()
+ft::string::~string()
 {
 	return ;
 }
 
-xString::xString(xString const &rhs)
+ft::string::string(string const &rhs)
 :std::string(rhs)
 {
 	
 }
 
-xString &xString::operator=(xString const &rhs)
+ft::string &ft::string::operator=(string const &rhs)
 {
 	if (this != &rhs)
 	{
@@ -49,32 +57,20 @@ xString &xString::operator=(xString const &rhs)
 	return (*this);
 }
 
-bool	xString::contain_not_of(std::string const &to_search, size_type start, size_type end) const
+bool	ft::string::has_only(std::string const &to_search, size_type start, size_type end) const
 {
 	if (end == std::string::npos)
 		end = this->size();
 
 	size_type const	pos = find_first_not_of(to_search, start);
 
-	if (pos != std::string::npos && pos <= end)
+	if (pos == std::string::npos || pos > end || pos < start)
 		return (true);
 	else
 		return (false);
 }
 
-bool	xString::contain_any_of(std::string const &to_search, size_type start, size_type end) const
-{
-	if (end == std::string::npos)
-		end = this->size();
-	size_type const	pos = find_first_of(to_search, start);
-
-	if (pos != std::string::npos && pos <= end)
-		return (true);
-	else
-		return (false);
-}
-
-bool	xString::start_with(std::string const &to_search) const
+bool	ft::string::start_with(std::string const &to_search) const
 {
 	size_type pos = find_first_of(to_search);
 	if (pos == 0)
@@ -83,7 +79,7 @@ bool	xString::start_with(std::string const &to_search) const
 		return (false);
 }
 
-bool	xString::start_with(char const to_search) const
+bool	ft::string::start_with(char const to_search) const
 {
 	size_type pos = find_first_of(to_search);
 	if (pos == 0)
@@ -92,7 +88,7 @@ bool	xString::start_with(char const to_search) const
 		return (false);
 }
 
-bool	xString::end_with(std::string const &to_search) const
+bool	ft::string::end_with(std::string const &to_search) const
 {
 	size_type pos = find_last_of(to_search);
 	if (pos + 1 == this->size())
@@ -101,7 +97,7 @@ bool	xString::end_with(std::string const &to_search) const
 		return (false);
 }
 
-bool	xString::end_with(char const to_search) const
+bool	ft::string::end_with(char const to_search) const
 {
 	size_type pos = find_last_of(to_search);
 	if (pos + 1 == this->size())
@@ -110,39 +106,39 @@ bool	xString::end_with(char const to_search) const
 		return (false);
 }
 
-char	&xString::front(void)
+char	&ft::string::front(void)
 {
 	return (std::string::at(0));
 }
 
-char const	&xString::front(void) const
+char const	&ft::string::front(void) const
 {
 	return (std::string::at(0));
 }
 
-char	&xString::back(void)
+char	&ft::string::back(void)
 {
 	return (std::string::at(std::string::size() - 1));
 }
 
-char const	&xString::back(void) const
+char const	&ft::string::back(void) const
 {
 	return (std::string::at(std::string::size() - 1));
 }
 
-void	xString::pop(void)
+void	ft::string::pop(void)
 {
 	if (std::string::size() > 0)
 		std::string::erase(0, 1);
 }
 
-void	xString::pop_back(void)
+void	ft::string::pop_back(void)
 {
 	if (std::string::size() > 0)
 		std::string::erase(std::string::size() - 1, 1);
 }
 
-void	xString::trim(std::string const &target)
+void	ft::string::trim(std::string const &target)
 {
 	while (start_with(target))
 		this->pop();
@@ -150,7 +146,7 @@ void	xString::trim(std::string const &target)
 		this->pop_back();
 }
 
-void	xString::trim(char const &target)
+void	ft::string::trim(char const &target)
 {
 	while (start_with(target))
 		this->pop();
@@ -158,11 +154,11 @@ void	xString::trim(char const &target)
 		this->pop_back();
 }
 
-xString::xstring_vector	xString::split(std::string const &delims) const
+ft::string::string_vector	ft::string::split(std::string const &delims) const
 {
-	xstring_vector		split_v;
-	size_type	cp_end = 0;
-	size_type	cp_begin = 0;
+	string_vector	split_v;
+	size_type		cp_end = 0;
+	size_type		cp_begin = 0;
 
 	while (true)
 	{
@@ -181,16 +177,4 @@ xString::xstring_vector	xString::split(std::string const &delims) const
 	if (cp_begin < std::string::size())
 		split_v.push_back(std::string::substr(cp_begin, std::string::size() - cp_begin));
 	return (split_v);
-}
-
-std::ostream &operator<<(std::ostream &os, xString::xstring_vector const &rhs)
-{
-	xString::xstring_vector::const_iterator it = rhs.begin();
-
-	while (it != rhs.end())
-	{
-		os  << "[" << *it << "]";
-		it++;
-	}
-	return (os);
 }

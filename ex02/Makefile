@@ -6,7 +6,7 @@
 #    By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 14:12:23 by mogawa            #+#    #+#              #
-#    Updated: 2024/05/27 11:40:30 by mogawa           ###   ########.fr        #
+#    Updated: 2024/07/12 10:57:26 by mogawa           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ GTEST_INC	:=	-I../googletest/googletest/include -I../googletest/googlemock/inclu
 GTEST_LIB	:=	-L../googletest/build/lib
 INC			:=	-I../include -I./include
 SRC			=	 \
-				XString.cpp \
+				xString.cpp \
 				main.cpp
 SRCDIR		:=	src
 OBJDIR		:=	obj
@@ -32,7 +32,7 @@ endif
 
 ifdef WITH_ASAN
 CXXFLAGS	:=	$(filter-out -Werror, $(CXXFLAGS))
-CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined -Wshadow -Wconversion -Wno-sign-conversion -pedantic-errors
+CXXFLAGS	+=	-g3 -O0 -fsanitize=address,undefined -Wshadow -Wconversion -Wno-sign-conversion -pedantic-errors -DDEBUG
 LDFLAGS		:=	-fsanitize=address,undefined
 endif
 

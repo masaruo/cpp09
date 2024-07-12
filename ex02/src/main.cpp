@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/27 11:37:18 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 10:58:08 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ int	main(int argc, char **argv)
 	{
 		PmergeMe<std::vector<std::size_t> >vec_sort(const_cast<char const **>(argv));
 		PmergeMe<std::deque<std::size_t> >deque_sort(const_cast<char const **>(argv));
-		vec_sort.sort_start();
-		deque_sort.sort_start();
+		vec_sort.sort_start_vector();
+		deque_sort.sort_start_deque();
 		std::cout << BLUE;
 		vec_sort.print();
 		std::cout << MAGENTA;

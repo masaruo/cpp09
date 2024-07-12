@@ -6,11 +6,12 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:51:47 by mogawa            #+#    #+#             */
-/*   Updated: 2024/05/27 11:39:00 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 10:51:08 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+#include "string.hpp"
 #include <map>
 #include <utility>
 #include <sstream>
@@ -31,9 +32,9 @@ private:
 	void	for_each_line(char const *file, F func);
 	bool	parse_data_csv(std::string const &line);
 	bool	input_handler(std::string const &line);
-	void	assert_input_format(std::string const &line, std::string &date, std::string &value);
-	void	assert_input_date(std::string const &line, std::string const &date);
-	void	assert_input_value(std::string const &line, std::string const &value);
+	void	assert_alnum_sequence(std::string const &readline);
+	void	assert_input_date(std::string const &readline, std::string const in_date);
+	void	assert_input_value(std::string const in_value);
 	double	get_px(std::string const &key) const;
 public:
 	BitcoinExchange();
