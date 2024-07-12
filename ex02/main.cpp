@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:02:44 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 09:48:22 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 10:31:25 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,16 @@ int	main(int argc, char **argv)
 	try
 	{
 		PmergeMe<std::vector<std::size_t> >vec_sort(const_cast<char const **>(argv));
-		// PmergeMe<std::deque<std::size_t> >deque_sort(const_cast<char const **>(argv));
-		vec_sort.sort_start();
-		// deque_sort.sort_start();
+		PmergeMe<std::deque<std::size_t> >deque_sort(const_cast<char const **>(argv));
+		vec_sort.sort_start_vector();
+		deque_sort.sort_start_deque();
 		std::cout << BLUE;
 		vec_sort.print();
 		std::cout << MAGENTA;
 		print_duration(vec_sort.get_valid_argc(), "vector", vec_sort.get_duration());
 		std::cout << YELLOW;
 		// deque_sort.print();
-		// print_duration(deque_sort.get_valid_argc(), "deque", deque_sort.get_duration());
+		print_duration(deque_sort.get_valid_argc(), "deque", deque_sort.get_duration());
 		std::cout << RESET;
 	}
 	catch(std::exception& e)

@@ -6,12 +6,14 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 15:28:39 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/12 10:02:04 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/12 10:34:02 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "xString.hpp"
+#include <vector>
+#include <deque>
 #include <iostream>
 #include <sstream>
 #include <ctime>
@@ -51,7 +53,8 @@ private:
 public:
 	PmergeMe(char const **argv);
 	~PmergeMe();
-	void		sort_start(void);
+	void		sort_start_vector(void);
+	void		sort_start_deque(void);
 	double		get_duration(void) const;
 	std::size_t	get_valid_argc(void) const;
 	void		print(void) const;
@@ -179,19 +182,45 @@ std::size_t	PmergeMe<Con>::get_valid_argc(void) const
 #include <sys/time.h>
 
 template <typename Con>
-void	PmergeMe<Con>::sort_start(void)
+void	PmergeMe<Con>::sort_start_vector(void)
 {
-	nested_vec	v_seq;
-	const_iterator		argv_iter = argv_seq.begin();
+	nested_vec		nested_vector;
+	const_iterator	argv_iter = argv_seq.begin();
 	std::clock_t start = std::clock();
 	while (argv_iter != argv_seq.end())
 	{
-		std::vector<std::size_t> tmp;
+		Con tmp;
 		tmp.push_back(*argv_iter);
-		v_seq.push_back(tmp);
+		nested_vector.push_back(tmp);
 		argv_iter++;
 	}
-	sort_vector(v_seq);
+	sort_vector(nested_vector);
+	for (const_nested_vec_iter it = nested_vector.begin(); it != nested_vector.end(); it++)
+	{
+		sorted_seq.push_back(it->front());
+	}
+	std::clock_t end = std::clock();
+	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
+}
+
+template <typename Con>
+void	PmergeMe<Con>::sort_start_deque(void)
+{
+	nested_dq		nested_deque;
+	const_iterator	argv_iter = argv_seq.begin();
+	std::clock_t start = std::clock();
+	while (argv_iter != argv_seq.end())
+	{
+		Con tmp;
+		tmp.push_back(*argv_iter);
+		nested_deque.push_back(tmp);
+		argv_iter++;
+	}
+	sort_deque(nested_deque);
+	for (const_nested_dq_iter it = nested_deque.begin(); it != nested_deque.end(); it++)
+	{
+		sorted_seq.push_back(it->front());
+	}
 	std::clock_t end = std::clock();
 	sorting_duration = static_cast<double>((end - start)) / CLOCKS_PER_SEC * 1000.0;
 }
@@ -295,6 +324,126 @@ void	PmergeMe<Con>::sort_vector(nested_vec &seq)
 	{
 		nested_vec	tmp;
 		for (const_nested_vec_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
+		{
+			if (small_iter->front() == 0)
+			{
+				large.push_back(*small_iter);
+				break ;
+			}
+			else if (*large_iter > *small_iter)
+			{
+				large.insert(large_iter, *small_iter);
+				break ;
+			}
+			else if (large_iter + 1 == large.end())
+			{
+				large.push_back(*small_iter);
+				break ;
+			}
+		}
+	}
+	seq = large;
+}
+
+template <typename Con>
+void	PmergeMe<Con>::sort_deque(nested_dq &seq)
+{
+	//stack building
+	if (seq.size() < 2)
+		return ;
+
+	nested_dq					tmp_nested;
+	Con							tmp_vec;
+	const_nested_dq_iter		crnt = seq.begin();
+	const_nested_dq_iter		next = crnt + 1;
+	const_nested_dq_iter		end = seq.end();
+	while (true)
+	{
+		if (crnt->front() == 0 || next->front() == 0)
+		{
+			Con	zeropad1(crnt->size(), 0);
+			zeropad1.insert(zeropad1.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeropad1);
+			Con	zeropad2(crnt->size(), 0);
+			zeropad2.insert(zeropad2.end(), next->begin(), next->end());
+			tmp_nested.push_back(zeropad2);
+		}
+		else if (*crnt >= *next)
+		{
+			tmp_vec = *crnt;
+			tmp_vec.insert(tmp_vec.end(), next->begin(), next->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		else
+		{
+			tmp_vec = *next;
+			tmp_vec.insert(tmp_vec.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(tmp_vec);
+		}
+		if (crnt + 2 == end)
+		{
+			break ;
+		}
+		else if (next + 2 == end)
+		{
+			crnt += 2;
+			Con	zeros(crnt->size(), 0);
+			zeros.insert(zeros.end(), crnt->begin(), crnt->end());
+			tmp_nested.push_back(zeros);
+			break ;
+		}
+		crnt += 2;
+		next += 2;
+	}
+	seq = tmp_nested;
+
+	// check size of nested container (1 container ex 0 then finish stack build up)
+	nested_dq_size_type	size = 0;
+	for (const_nested_dq_iter i = seq.begin(); i != seq.end(); i++)
+	{
+		if (i->front() != 0)
+			size++;
+	}
+
+	//!resurse
+	if (size != 1)
+	{
+		sort_deque(seq);
+	}
+
+	//!stack unwinding
+	if (seq.front().size() == 1)
+		return ;
+
+	// ベクターを中間地点にて大きい数字ベクターと小さい数字ベクターに分割(要素が２よりも大きいとき)
+	nested_dq	large, small;
+	for (const_nested_dq_iter v = seq.begin(); v != seq.end(); v++)
+	{
+		Con	front, back;
+		const_iterator	mid = v->begin();
+		if (seq.front().size() != 2)
+		{
+			std::advance(mid, v->size() / 2);
+		}
+		else
+		{
+			std::advance(mid, 1);
+		}
+
+		front.insert(front.end(), v->begin(), mid);
+		back.insert(back.end(), mid, v->end());
+		if (front.front() != 0)
+		{
+			large.push_back(front);
+		}
+		small.push_back(back);
+	}
+
+	// insert
+	for (const_nested_dq_iter small_iter = small.begin(); small_iter != small.end(); small_iter++)
+	{
+		nested_dq	tmp;
+		for (const_nested_dq_iter large_iter = large.begin(); large_iter != large.end(); large_iter++)
 		{
 			if (small_iter->front() == 0)
 			{
