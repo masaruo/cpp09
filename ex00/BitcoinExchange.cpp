@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/08 10:02:07 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/14 10:42:53 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 
 std::string BitcoinExchange::DIGITS = "0123456789";
 
@@ -56,8 +57,8 @@ static void	print(std::string const &date, double unit, double px)
 
 void	BitcoinExchange::assert_input_value(std::string const in_value)
 {
-	std::istringstream	iss(in_value);
-	double				val;
+	std::istringstream		iss(in_value);
+	double					val;
 	iss >> val;
 	if (val < 0)
 		throw (BTCNegativeNumException());
@@ -103,10 +104,19 @@ void	BitcoinExchange::assert_alnum_sequence(std::string const &readline)
 		!line.has_only(" ", 10, 10) ||
 		!line.has_only("|", 11, 11) ||
 		!line.has_only(" ", 12, 12) ||
-		!line.has_only(ft::string::NUMBER + "-", 13, 13)
+		!line.has_only(ft::string::NUMBER + "-", 13, 13) ||
+		!line.has_only(ft::string::NUMBER + ".", 14)
 		)
 	{
 		throw (BTCBadInputException(line));
+	}
+	if (line.size() > 14)
+	{
+		std::string::iterator		it = line.begin();
+		std::advance(it, 14);
+		std::string::difference_type	dot_count = std::count(it, line.end(), '.');
+		if (dot_count > 1)
+			throw (BTCBadInputException(line));
 	}
 }
 
