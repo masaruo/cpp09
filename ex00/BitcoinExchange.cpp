@@ -6,7 +6,7 @@
 /*   By: mogawa <masaruo@gmail.com>                 +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 23:52:05 by mogawa            #+#    #+#             */
-/*   Updated: 2024/07/14 10:42:53 by mogawa           ###   ########.fr       */
+/*   Updated: 2024/07/14 11:23:07 by mogawa           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
+#include <ctime>
 
 std::string BitcoinExchange::DIGITS = "0123456789";
 
@@ -68,28 +69,46 @@ void	BitcoinExchange::assert_input_value(std::string const in_value)
 
 void	BitcoinExchange::assert_input_date(std::string const &readline, std::string const in_date)
 {
-		std::istringstream	iss(in_date);
-		ft::string	y, m, d;
-		if (std::getline(iss, y, '-') && std::getline(iss, m, '-') && std::getline(iss, d))
-		{
-			std::istringstream	y_ss(y);
-			std::istringstream	m_ss(m);
-			std::istringstream	d_ss(d);
-			std::size_t y_d, m_d, d_d;
-			y_ss >> y_d;
-			m_ss >> m_d;
-			d_ss >> d_d;
-			if (y_d < 1)
-				throw (BTCBadInputException(readline));
-			if (m_d < 1 || m_d > 12)
-				throw (BTCBadInputException(readline));
-			if (d_d < 1 || d_d > 31)
-				throw (BTCBadInputException(readline));
-		}
-		else
-		{
-			return ;
-		}
+	struct tm tm = {};
+	const char *parsed = strptime(in_date.c_str(), "%Y-%m-%d", &tm);
+	if (parsed == NULL || *parsed != '\0')
+		throw (BTCBadInputException(readline));
+
+	// Normalize the date
+	tm.tm_hour = 12;// Set to noon to avoid daylight saving time issues
+	std::time_t time = std::mktime(&tm);
+	if (time == -1)
+		throw BTCBadInputException(readline);
+
+	char date_after_strftime[11];// YYYY-MM-DD\0
+	if (std::strftime(date_after_strftime, sizeof(date_after_strftime), "%Y-%m-%d", std::localtime(&time)) == 0)
+		throw BTCBadInputException(readline);
+
+	if (in_date != date_after_strftime)
+		throw BTCBadInputException(readline);
+
+	std::istringstream	iss(in_date);
+	ft::string	y, m, d;
+	if (std::getline(iss, y, '-') && std::getline(iss, m, '-') && std::getline(iss, d))
+	{
+		std::istringstream	y_ss(y);
+		std::istringstream	m_ss(m);
+		std::istringstream	d_ss(d);
+		std::size_t y_d, m_d, d_d;
+		y_ss >> y_d;
+		m_ss >> m_d;
+		d_ss >> d_d;
+		if (y_d < 1)
+			throw (BTCBadInputException(readline));
+		if (m_d < 1 || m_d > 12)
+			throw (BTCBadInputException(readline));
+		if (d_d < 1 || d_d > 31)
+			throw (BTCBadInputException(readline));
+	}
+	else
+	{
+		return ;
+	}
 }
 
 void	BitcoinExchange::assert_alnum_sequence(std::string const &readline)
